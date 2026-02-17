@@ -1,13 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { loginAsDemo } from '@/lib/demo'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [demoLoading, setDemoLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,6 +34,19 @@ export default function LoginPage() {
 
     setSent(true)
     setLoading(false)
+  }
+
+  async function handleDemoLogin() {
+    setDemoLoading(true)
+    setError(null)
+
+    try {
+      await loginAsDemo()
+      router.push('/')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Demo login failed')
+      setDemoLoading(false)
+    }
   }
 
   return (
@@ -97,6 +114,21 @@ export default function LoginPage() {
           </form>
         )}
       </div>
+
+      <div className="mt-6 flex w-full items-center gap-3">
+        <div className="h-px flex-1 bg-mpl-border" />
+        <span className="text-xs text-slate-400">or</span>
+        <div className="h-px flex-1 bg-mpl-border" />
+      </div>
+
+      <button
+        type="button"
+        onClick={handleDemoLogin}
+        disabled={demoLoading}
+        className="mt-4 w-full rounded-lg border border-mpl-border bg-mpl-surface px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50 disabled:opacity-50"
+      >
+        {demoLoading ? 'Starting demo...' : 'Try Demo'}
+      </button>
     </div>
   )
 }

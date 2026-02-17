@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "MPL - Manual Process Log",
   description:
     "Track time spent on manual processes. Fast, mobile-friendly time logging for CH and MH teams.",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -30,7 +34,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
       </head>
       <body>
         {children}
