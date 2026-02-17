@@ -31,6 +31,11 @@ export default function LogPage() {
   const [timerRunning, setTimerRunning] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Submission state
+  const [submitting, setSubmitting] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // Timer interval effect
   useEffect(() => {
     if (timerRunning) {
@@ -55,6 +60,70 @@ export default function LogPage() {
     setTimerRunning(false)
     setTimerSeconds(0)
   }, [])
+
+  // Cleanup toast timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  function showToast(message: string, type: 'success' | 'error') {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current)
+    }
+    setToast({ message, type })
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast(null)
+      toastTimeoutRef.current = null
+    }, 2000)
+  }
+
+  async function handleSubmit() {
+    if (!canSubmit || !selectedCategory || !selectedSubtask) return
+
+    setSubmitting(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        showToast('Not authenticated', 'error')
+        setSubmitting(false)
+        return
+      }
+
+      const verified = entryMode === 'timer' && timerSeconds > 0
+
+      const { error: insertError } = await supabase.from('log_entries').insert({
+        user_id: user.id,
+        category_id: selectedCategory.id,
+        subtask_id: selectedSubtask.id,
+        minutes: effectiveMinutes,
+        occurrences,
+        note: note || null,
+        verified,
+      })
+
+      if (insertError) {
+        showToast('Failed to log entry', 'error')
+        setSubmitting(false)
+        return
+      }
+
+      showToast('Entry logged ✅', 'success')
+      // Reset all state and return to category selection
+      resetTimeEntry()
+      setSelectedCategory(null)
+      setSelectedSubtask(null)
+      setStep('category')
+    } catch {
+      showToast('Something went wrong', 'error')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   function formatTimerDisplay(totalSeconds: number): string {
     const mins = Math.floor(totalSeconds / 60)
@@ -187,6 +256,19 @@ export default function LogPage() {
 
   return (
     <div>
+      {/* Toast notification */}
+      {toast && (
+        <div
+          className={`fixed left-1/2 top-20 z-50 -translate-x-1/2 animate-[fadeIn_150ms_ease-out] rounded-xl px-5 py-3 text-sm font-semibold shadow-sm ${
+            toast.type === 'success'
+              ? 'border-l-4 border-green-500 bg-white text-green-700'
+              : 'border-l-4 border-red-500 bg-white text-red-700'
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Breadcrumb */}
       {step !== 'category' && (
         <div className="mb-4 flex items-center gap-2">
@@ -454,10 +536,11 @@ export default function LogPage() {
           {/* Submit button */}
           <button
             type="button"
-            disabled={!canSubmit}
+            disabled={!canSubmit || submitting}
+            onClick={handleSubmit}
             className="w-full rounded-xl bg-mpl-primary py-3.5 text-base font-bold text-white transition-colors duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100"
           >
-            {canSubmit ? `Log ${effectiveMinutes}m Entry` : 'Log Entry'}
+            {submitting ? 'Logging...' : canSubmit ? `Log ${effectiveMinutes}m Entry` : 'Log Entry'}
           </button>
         </div>
       )}

@@ -112,7 +112,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **2.5 Build timer mode** - In the Timer tab of the time entry step: large monospace display (MM:SS), Start/Pause/Resume button (blue for start/resume, red for pause), Reset button when paused. Timer runs via `setInterval`. When stopped, the accumulated seconds are used for the entry. Occurrences stepper and note field still visible below timer. Submit button disabled while timer is actively running.
 
-- [ ] **2.6 Implement log entry submission** - On submit, INSERT into `log_entries` table with: user_id from auth session, category_id, subtask_id, minutes (from chips/custom/timer), occurrences, note, verified (true if timer was used with seconds > 0, false for quick entry). Show success toast "Entry logged ✅" for 2 seconds. Reset all form state and return to category selection. Handle errors gracefully with error toast.
+- [x] **2.6 Implement log entry submission** - On submit, INSERT into `log_entries` table with: user_id from auth session, category_id, subtask_id, minutes (from chips/custom/timer), occurrences, note, verified (true if timer was used with seconds > 0, false for quick entry). Show success toast "Entry logged ✅" for 2 seconds. Reset all form state and return to category selection. Handle errors gracefully with error toast.
 
 ### Phase 3: History View
 

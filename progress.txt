@@ -215,3 +215,23 @@
   - Timer state (timerSeconds, timerRunning) is separate from quick entry state — both coexist, entryMode switches which is used
   - The verified field in log_entries will be true for timer entries (timerSeconds > 0) — task 2.6 will implement this
 ---
+
+## Iteration 13 - 2.6 Implement log entry submission
+- Added handleSubmit async function that INSERTs into log_entries via Supabase client
+- Entry fields: user_id (from auth session), category_id, subtask_id, minutes (effectiveMinutes), occurrences, note (null if empty), verified (true if timer mode with timerSeconds > 0)
+- Added submitting state to prevent double-submission and show "Logging..." on button
+- Added toast notification system: showToast() displays a fixed-position toast for 2 seconds with auto-dismiss
+- Toast styled with green left-accent bar for success, red for error (matches design spec)
+- Added fadeIn CSS keyframe animation in globals.css for toast entrance
+- On success: shows "Entry logged ✅", resets all form state (time, occurrences, note, timer), clears selections, returns to category step
+- On error: shows error toast, does NOT reset state (user can retry)
+- Cleanup: toastTimeoutRef cleared on unmount to prevent memory leaks
+- Submit button now: calls handleSubmit onClick, disabled when submitting OR !canSubmit, shows dynamic label
+- Files changed: app/(main)/log/page.tsx, app/globals.css, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Toast pattern: useRef for timeout ID + state for visibility + cleanup on unmount
+  - The finally block in handleSubmit always resets submitting state, even on unexpected errors
+  - verified flag: entryMode === 'timer' && timerSeconds > 0 — both conditions needed (user could switch to timer but never start it)
+  - After successful submission, state resets in order: resetTimeEntry() → clear selections → set step to 'category'
+  - The toast persists across step changes since it's rendered at the top of the component, outside step-conditional blocks
+---
