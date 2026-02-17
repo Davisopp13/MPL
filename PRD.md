@@ -152,7 +152,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **7.3 Add page transitions and micro-interactions** - Subtle animations: slide-up for step transitions in log flow, fade-in for toast notifications, press feedback on buttons (scale 0.97 on active), smooth progress bar fills on insights. Use CSS animations or Tailwind `transition` utilities. Keep it fast - no animation > 200ms.
 
-- [ ] **7.4 Write tests** - Create tests using Vitest or Jest: (1) Unit tests for time formatting helpers, date grouping logic, and minutes calculation from timer. (2) Component tests for time chip selection behavior (chip select, custom input sync, chip deselect). (3) Integration test that the log flow state machine works: category → subtask → time → submit resets correctly. Minimum 10 test cases covering happy paths and edge cases.
+- [x] **7.4 Write tests** - Create tests using Vitest or Jest: (1) Unit tests for time formatting helpers, date grouping logic, and minutes calculation from timer. (2) Component tests for time chip selection behavior (chip select, custom input sync, chip deselect). (3) Integration test that the log flow state machine works: category → subtask → time → submit resets correctly. Minimum 10 test cases covering happy paths and edge cases.
 
 ## Design Reference
 

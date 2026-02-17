@@ -3,110 +3,11 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { LogEntry } from '@/types/database'
+import { calculateKpis, calculateCategoryBreakdown, calculateTopSubtask } from '@/lib/utils'
 
 type LogEntryWithCategory = LogEntry & {
   categories: { label: string; icon: string } | null
   subtasks: { label: string } | null
-}
-
-type KpiData = {
-  totalMinutes: number
-  hoursPerWeek: number
-  totalEntries: number
-  totalOccurrences: number
-}
-
-type CategoryBreakdown = {
-  categoryId: string
-  label: string
-  icon: string
-  totalMinutes: number
-  percentage: number
-}
-
-type TopSubtask = {
-  subtaskLabel: string
-  categoryLabel: string
-  categoryIcon: string
-  totalMinutes: number
-  monthlySavings: number
-}
-
-function calculateKpis(entries: LogEntry[]): KpiData {
-  if (entries.length === 0) {
-    return { totalMinutes: 0, hoursPerWeek: 0, totalEntries: 0, totalOccurrences: 0 }
-  }
-
-  const totalMinutes = entries.reduce((sum, e) => sum + e.minutes, 0)
-  const totalEntries = entries.length
-  const totalOccurrences = entries.reduce((sum, e) => sum + e.occurrences, 0)
-
-  // Calculate hours/week: find the date range of entries, then compute weekly average
-  const timestamps = entries.map((e) => new Date(e.created_at).getTime())
-  const earliest = Math.min(...timestamps)
-  const latest = Math.max(...timestamps)
-  const msPerWeek = 7 * 24 * 60 * 60 * 1000
-  const weekSpan = Math.max((latest - earliest) / msPerWeek, 1)
-  const hoursPerWeek = Math.round((totalMinutes / 60 / weekSpan) * 10) / 10
-
-  return { totalMinutes, hoursPerWeek, totalEntries, totalOccurrences }
-}
-
-function calculateCategoryBreakdown(entries: LogEntryWithCategory[]): CategoryBreakdown[] {
-  const categoryMap = new Map<string, { label: string; icon: string; totalMinutes: number }>()
-
-  for (const entry of entries) {
-    const existing = categoryMap.get(entry.category_id)
-    if (existing) {
-      existing.totalMinutes += entry.minutes
-    } else {
-      categoryMap.set(entry.category_id, {
-        label: entry.categories?.label ?? 'Unknown',
-        icon: entry.categories?.icon ?? '📌',
-        totalMinutes: entry.minutes,
-      })
-    }
-  }
-
-  const sorted = Array.from(categoryMap.entries())
-    .map(([categoryId, data]) => ({ categoryId, ...data, percentage: 0 }))
-    .sort((a, b) => b.totalMinutes - a.totalMinutes)
-
-  const maxMinutes = sorted[0]?.totalMinutes ?? 1
-
-  return sorted.map((item) => ({
-    ...item,
-    percentage: Math.round((item.totalMinutes / maxMinutes) * 100),
-  }))
-}
-
-function calculateTopSubtask(entries: LogEntryWithCategory[]): TopSubtask | null {
-  if (entries.length === 0) return null
-
-  const subtaskMap = new Map<string, { subtaskLabel: string; categoryLabel: string; categoryIcon: string; totalMinutes: number }>()
-
-  for (const entry of entries) {
-    const existing = subtaskMap.get(entry.subtask_id)
-    if (existing) {
-      existing.totalMinutes += entry.minutes
-    } else {
-      subtaskMap.set(entry.subtask_id, {
-        subtaskLabel: entry.subtasks?.label ?? 'Unknown',
-        categoryLabel: entry.categories?.label ?? 'Unknown',
-        categoryIcon: entry.categories?.icon ?? '📌',
-        totalMinutes: entry.minutes,
-      })
-    }
-  }
-
-  let top: TopSubtask | null = null
-  for (const data of subtaskMap.values()) {
-    if (!top || data.totalMinutes > top.totalMinutes) {
-      top = { ...data, monthlySavings: Math.round(data.totalMinutes * 4.3) }
-    }
-  }
-
-  return top
 }
 
 export default function InsightsPage() {

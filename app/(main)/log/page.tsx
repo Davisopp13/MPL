@@ -3,13 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Category, Subtask } from '@/types/database'
+import { TIME_CHIPS, formatTimerDisplay } from '@/lib/utils'
 
 type CategoryWithSubtasks = Category & { subtasks: Subtask[] }
 
 type LogStep = 'category' | 'subtask' | 'time'
 type EntryMode = 'quick' | 'timer'
-
-const TIME_CHIPS = [5, 10, 15, 20, 30, 45, 60] as const
 
 export default function LogPage() {
   const [categories, setCategories] = useState<CategoryWithSubtasks[]>([])
@@ -123,12 +122,6 @@ export default function LogPage() {
     } finally {
       setSubmitting(false)
     }
-  }
-
-  function formatTimerDisplay(totalSeconds: number): string {
-    const mins = Math.floor(totalSeconds / 60)
-    const secs = totalSeconds % 60
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
   }
 
   useEffect(() => {

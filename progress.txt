@@ -493,3 +493,32 @@
   - active:scale-[0.97] is the standard press feedback pattern used across all interactive buttons in the app
   - transition-all vs transition-colors: use transition-all when scale transform is also needed alongside color changes
 ---
+
+## Iteration 28 - 7.4 Write tests
+- Extracted pure functions from page components into shared lib/utils.ts for testability
+- Created lib/__tests__/utils.test.ts with 55 test cases across 14 describe blocks
+- Updated page components (log, history, insights, layout) to import from lib/utils.ts instead of defining functions inline
+- Test coverage includes:
+  - formatTimerDisplay: 5 tests (zero, seconds, exact minutes, mixed, large values)
+  - computeTimerMinutes: 4 tests (zero, partial rounding, exact, boundary)
+  - computeEffectiveMinutes: 5 tests (chip, custom, empty, preference, timer mode)
+  - canSubmitEntry: 4 tests (valid, zero minutes, running timer, both invalid)
+  - handleChipSelectLogic: 3 tests (select, deselect toggle, switch)
+  - handleCustomMinutesLogic: 4 tests (strip non-digits, auto-select matching chip, no match, empty)
+  - getDateKey: 2 tests (format, zero-padding)
+  - formatDateLabel: 3 tests (today, yesterday, older date)
+  - formatTime: 4 tests (morning, noon, midnight, afternoon)
+  - groupEntriesByDate: 4 tests (empty, same day, different days, total calculation)
+  - calculateKpis: 3 tests (empty, sums, hours/week with min span)
+  - calculateCategoryBreakdown: 5 tests (empty, aggregation, sorting, percentage, null fallback)
+  - calculateTopSubtask: 3 tests (empty, highest subtask, monthly savings)
+  - getInitials: 5 tests (single name, two names, three+ names, whitespace, lowercase)
+  - TIME_CHIPS: 1 test (constant values)
+- Files changed: lib/utils.ts (new), lib/__tests__/utils.test.ts (new), app/(main)/log/page.tsx, app/(main)/history/page.tsx, app/(main)/insights/page.tsx, app/(main)/layout.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Extract pure functions into shared utils for testability — avoid testing React components directly when logic can be isolated
+  - Vitest runs fast in jsdom environment — 55 tests in 4ms
+  - Date-related tests should use Date constructor with explicit year/month/day to avoid timezone ambiguity
+  - The TIME_CHIPS tuple type enables type-safe .includes() checks via `as typeof TIME_CHIPS[number]` cast
+  - groupEntriesByDate made generic with `<T extends EntryWithDateAndMinutes>` so it works with different entry types
+---

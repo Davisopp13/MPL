@@ -3,67 +3,11 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { LogEntry } from '@/types/database'
+import { formatTime, getDateKey, groupEntriesByDate } from '@/lib/utils'
 
 type LogEntryWithRelations = LogEntry & {
   categories: { label: string; icon: string }
   subtasks: { label: string }
-}
-
-type DateGroup = {
-  label: string
-  totalMinutes: number
-  entries: LogEntryWithRelations[]
-}
-
-function formatDateLabel(dateStr: string): string {
-  const date = new Date(dateStr + 'T00:00:00')
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-
-  if (target.getTime() === today.getTime()) return 'Today'
-  if (target.getTime() === yesterday.getTime()) return 'Yesterday'
-
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`
-}
-
-function getDateKey(createdAt: string): string {
-  const date = new Date(createdAt)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-
-function formatTime(createdAt: string): string {
-  const date = new Date(createdAt)
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  const ampm = hours >= 12 ? 'PM' : 'AM'
-  const displayHours = hours % 12 || 12
-  return `${displayHours}:${String(minutes).padStart(2, '0')} ${ampm}`
-}
-
-function groupEntriesByDate(entries: LogEntryWithRelations[]): DateGroup[] {
-  const groups = new Map<string, LogEntryWithRelations[]>()
-
-  for (const entry of entries) {
-    const key = getDateKey(entry.created_at)
-    const existing = groups.get(key)
-    if (existing) {
-      existing.push(entry)
-    } else {
-      groups.set(key, [entry])
-    }
-  }
-
-  return Array.from(groups.entries()).map(([dateKey, groupEntries]) => ({
-    label: formatDateLabel(dateKey),
-    totalMinutes: groupEntries.reduce((sum, e) => sum + e.minutes, 0),
-    entries: groupEntries,
-  }))
 }
 
 export default function HistoryPage() {
