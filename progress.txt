@@ -64,3 +64,19 @@
   - SQL seed migrations don't affect TypeScript compilation — just verify with tsc that nothing else broke
   - Categories shared across teams (Routing Actions, Invoicing, 3rd Party Website, Report / Macro, Other) have separate rows per team with team-specific subtasks
 ---
+
+## Iteration 5 - 1.5 Set up Row Level Security
+- Created supabase/migrations/003_rls_policies.sql
+- Enabled RLS on all 4 tables: users, categories, subtasks, log_entries
+- Users policies: read own row, supervisors read all team members, insert own row (onboarding), update own row
+- Categories & subtasks: readable by all authenticated users (auth.uid() IS NOT NULL)
+- Log entries: insert own, read own, supervisors read all entries for users on their team
+- Supervisor team access uses EXISTS subquery joining users table to check role='supervisor' and matching team
+- Files changed: supabase/migrations/003_rls_policies.sql, PRD.md, progress.txt
+- Learnings for future iterations:
+  - RLS policies use auth.uid() to identify the current user
+  - Multiple SELECT policies on the same table are OR'd together — a user sees rows matching ANY policy
+  - Supervisor access pattern: EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'supervisor' AND team = target.team)
+  - INSERT policies use WITH CHECK (not USING) to validate new rows
+  - UPDATE policies need both USING (which rows can be seen) and WITH CHECK (what the new values can be)
+---
