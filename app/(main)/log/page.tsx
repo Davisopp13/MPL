@@ -7,6 +7,9 @@ import type { Category, Subtask } from '@/types/database'
 type CategoryWithSubtasks = Category & { subtasks: Subtask[] }
 
 type LogStep = 'category' | 'subtask' | 'time'
+type EntryMode = 'quick' | 'timer'
+
+const TIME_CHIPS = [5, 10, 15, 20, 30, 45, 60] as const
 
 export default function LogPage() {
   const [categories, setCategories] = useState<CategoryWithSubtasks[]>([])
@@ -15,6 +18,13 @@ export default function LogPage() {
   const [step, setStep] = useState<LogStep>('category')
   const [selectedCategory, setSelectedCategory] = useState<CategoryWithSubtasks | null>(null)
   const [selectedSubtask, setSelectedSubtask] = useState<Subtask | null>(null)
+
+  // Time entry state
+  const [entryMode, setEntryMode] = useState<EntryMode>('quick')
+  const [selectedChip, setSelectedChip] = useState<number | null>(null)
+  const [customMinutes, setCustomMinutes] = useState('')
+  const [occurrences, setOccurrences] = useState(1)
+  const [note, setNote] = useState('')
 
   useEffect(() => {
     async function fetchCategories() {
@@ -68,8 +78,49 @@ export default function LogPage() {
     } else if (step === 'time') {
       setStep('subtask')
       setSelectedSubtask(null)
+      resetTimeEntry()
     }
   }
+
+  function resetTimeEntry() {
+    setEntryMode('quick')
+    setSelectedChip(null)
+    setCustomMinutes('')
+    setOccurrences(1)
+    setNote('')
+  }
+
+  function handleChipSelect(minutes: number) {
+    if (selectedChip === minutes) {
+      setSelectedChip(null)
+      setCustomMinutes('')
+    } else {
+      setSelectedChip(minutes)
+      setCustomMinutes(String(minutes))
+    }
+  }
+
+  function handleCustomMinutesChange(value: string) {
+    // Only allow digits
+    const cleaned = value.replace(/\D/g, '')
+    setCustomMinutes(cleaned)
+    const num = parseInt(cleaned, 10)
+    if (TIME_CHIPS.includes(num as typeof TIME_CHIPS[number])) {
+      setSelectedChip(num)
+    } else {
+      setSelectedChip(null)
+    }
+  }
+
+  function handleOccurrenceChange(delta: number) {
+    setOccurrences(prev => Math.max(1, prev + delta))
+  }
+
+  // Compute the effective minutes for the submit button label
+  const effectiveMinutes = entryMode === 'quick'
+    ? (selectedChip ?? (customMinutes ? parseInt(customMinutes, 10) : 0))
+    : 0 // Timer mode will be handled in task 2.5
+  const canSubmit = effectiveMinutes > 0
 
   if (loading) {
     return (
@@ -182,12 +233,154 @@ export default function LogPage() {
         </div>
       )}
 
-      {/* Placeholder for Step 3: Time Entry (to be built in 2.4) */}
+      {/* Step 3: Time Entry */}
       {step === 'time' && selectedCategory && selectedSubtask && (
-        <div className="rounded-2xl border border-mpl-border bg-mpl-surface p-6 text-center">
-          <p className="text-sm text-slate-500">
-            Time entry coming soon for {selectedSubtask.label}
-          </p>
+        <div className="space-y-4">
+          {/* Context pill */}
+          <div className="flex items-center gap-2 rounded-xl border border-mpl-border bg-mpl-primary-light px-4 py-2.5">
+            <span className="text-lg">{selectedCategory.icon}</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-mpl-primary-dark">{selectedCategory.label}</p>
+              <p className="truncate text-sm font-semibold text-slate-800">{selectedSubtask.label}</p>
+            </div>
+          </div>
+
+          {/* Mode toggle */}
+          <div className="flex rounded-xl border border-mpl-border bg-mpl-surface p-1">
+            <button
+              type="button"
+              onClick={() => setEntryMode('quick')}
+              className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-colors duration-150 ${
+                entryMode === 'quick'
+                  ? 'bg-mpl-primary text-white'
+                  : 'text-slate-500'
+              }`}
+            >
+              Quick Entry
+            </button>
+            <button
+              type="button"
+              onClick={() => setEntryMode('timer')}
+              className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-colors duration-150 ${
+                entryMode === 'timer'
+                  ? 'bg-mpl-primary text-white'
+                  : 'text-slate-500'
+              }`}
+            >
+              Timer
+            </button>
+          </div>
+
+          {/* Quick Entry mode */}
+          {entryMode === 'quick' && (
+            <div className="space-y-4">
+              {/* Time chips */}
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Time Spent
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {TIME_CHIPS.map((minutes) => (
+                    <button
+                      key={minutes}
+                      type="button"
+                      onClick={() => handleChipSelect(minutes)}
+                      className={`rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors duration-150 active:scale-[0.97] ${
+                        selectedChip === minutes
+                          ? 'border-mpl-primary bg-mpl-primary text-white'
+                          : 'border-mpl-border bg-mpl-surface text-slate-700'
+                      }`}
+                    >
+                      {minutes}m
+                    </button>
+                  ))}
+                  {/* Custom input */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Custom"
+                      value={customMinutes && !TIME_CHIPS.includes(parseInt(customMinutes, 10) as typeof TIME_CHIPS[number]) ? customMinutes : ''}
+                      onChange={(e) => handleCustomMinutesChange(e.target.value)}
+                      className="w-20 rounded-full border border-mpl-border bg-mpl-surface px-3 py-2 text-center text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:border-mpl-primary focus:outline-none"
+                    />
+                    {customMinutes && !TIME_CHIPS.includes(parseInt(customMinutes, 10) as typeof TIME_CHIPS[number]) && (
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+                        m
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Timer mode placeholder (to be built in task 2.5) */}
+          {entryMode === 'timer' && (
+            <div className="rounded-2xl border border-mpl-border bg-mpl-surface p-8 text-center">
+              <p className="text-4xl font-mono font-bold text-slate-800">00:00</p>
+              <p className="mt-2 text-sm text-slate-400">Timer coming soon</p>
+            </div>
+          )}
+
+          {/* Occurrences stepper */}
+          <div>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Occurrences
+            </label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => handleOccurrenceChange(-1)}
+                disabled={occurrences <= 1}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-mpl-border bg-mpl-surface text-lg font-bold text-slate-600 transition-colors duration-150 active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100"
+              >
+                −
+              </button>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={occurrences}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value.replace(/\D/g, ''), 10)
+                  if (val > 0) setOccurrences(val)
+                  else if (e.target.value === '') setOccurrences(1)
+                }}
+                className="h-10 w-14 rounded-xl border border-mpl-border bg-mpl-surface text-center text-lg font-bold text-slate-800 focus:border-mpl-primary focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => handleOccurrenceChange(1)}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-mpl-border bg-mpl-surface text-lg font-bold text-slate-600 transition-colors duration-150 active:scale-[0.97]"
+              >
+                +
+              </button>
+              <span className="text-sm text-slate-400">How many times?</span>
+            </div>
+          </div>
+
+          {/* Note textarea */}
+          <div>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Note <span className="font-normal normal-case text-slate-400">(optional)</span>
+            </label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Add a quick note..."
+              rows={2}
+              className="w-full resize-none rounded-xl border border-mpl-border bg-mpl-surface px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-mpl-primary focus:outline-none"
+            />
+          </div>
+
+          {/* Submit button */}
+          <button
+            type="button"
+            disabled={!canSubmit}
+            className="w-full rounded-xl bg-mpl-primary py-3.5 text-base font-bold text-white transition-colors duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100"
+          >
+            {canSubmit ? `Log ${effectiveMinutes}m Entry` : 'Log Entry'}
+          </button>
         </div>
       )}
     </div>

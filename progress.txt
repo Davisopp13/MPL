@@ -171,3 +171,25 @@
   - The overflow-hidden on the container with rounded-xl clips the border-radius on child buttons
   - Breadcrumb navigation allows going back to subtask step from time step by clicking category label
 ---
+
+## Iteration 11 - 2.4 Build time entry with chips (Step 3 of logging)
+- Built complete Step 3 time entry UI in app/(main)/log/page.tsx
+- Context pill at top showing selected category icon + label + subtask
+- Mode toggle: Quick Entry vs Timer (pill toggle with active state)
+- Quick Entry mode: 7 time chips (5m, 10m, 15m, 20m, 30m, 45m, 60m) + custom minute input
+- Chip selection highlights blue; selecting a chip syncs customMinutes; typing custom value deselects chips unless it matches a chip value
+- Toggling a selected chip off clears it (deselect behavior)
+- Occurrences stepper: − button, numeric input, + button, "How many times?" helper text
+- Optional note textarea
+- Submit button: disabled when no time selected, shows "Log 15m Entry" when time selected
+- Timer mode: placeholder with 00:00 display (to be built in task 2.5)
+- resetTimeEntry() function clears all time entry state when navigating back
+- Files changed: app/(main)/log/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - TIME_CHIPS as const tuple enables type-safe .includes() checks
+  - Custom input shows value only when it doesn't match a chip (otherwise chips handle display)
+  - effectiveMinutes derives from selectedChip ?? parsed customMinutes — clean computed state pattern
+  - canSubmit boolean gates the submit button; timer mode will set effectiveMinutes differently in task 2.5
+  - The entryMode state controls which input UI is shown (quick vs timer)
+  - inputMode="numeric" on inputs gives mobile users a number pad without restricting to type="number" quirks
+---
