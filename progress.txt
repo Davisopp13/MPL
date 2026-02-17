@@ -51,3 +51,16 @@
   - Schema matches types/database.ts exactly — future iterations can rely on this consistency
   - The users table PK references auth.users(id) — Supabase Auth must be set up before users can be inserted
 ---
+
+## Iteration 4 - 1.4 Create seed data migration
+- Created supabase/migrations/002_seed_categories.sql with all 19 categories and 85 subtasks
+- CH: 9 categories (Dwell Report, Routing Actions, Notice Emails, Manual Dispatch, Invoicing, 3rd Party Website, Rail Storage, Report / Macro, Other) with 27 subtasks
+- MH: 10 categories (Port / Terminal Mgmt, Routing Actions, Invoicing, Outlook / Notice Emails, Rail Billing, Cross Border, Report / Macro, Transshipment / Barge / Omit, 3rd Party Website, Other) with 58 subtasks
+- Used CTE pattern (WITH cat AS ... RETURNING id) to insert category and its subtasks in one statement
+- Every single subtask from the PRD taxonomy is included with sequential sort_order values
+- Files changed: supabase/migrations/002_seed_categories.sql, PRD.md, progress.txt
+- Learnings for future iterations:
+  - CTE with RETURNING id is the cleanest pattern for inserting parent + children with gen_random_uuid() PKs
+  - SQL seed migrations don't affect TypeScript compilation — just verify with tsc that nothing else broke
+  - Categories shared across teams (Routing Actions, Invoicing, 3rd Party Website, Report / Macro, Other) have separate rows per team with team-specific subtasks
+---

@@ -92,7 +92,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **1.3 Create Supabase migration for schema** - Create a SQL migration file at `supabase/migrations/001_initial_schema.sql` that creates all 4 tables (users, categories, subtasks, log_entries) with the exact schema defined above. Include indexes on `log_entries(user_id)`, `log_entries(category_id)`, `log_entries(created_at)`, `subtasks(category_id)`, and `categories(team)`.
 
-- [ ] **1.4 Create seed data migration** - Create `supabase/migrations/002_seed_categories.sql` that inserts ALL categories and subtasks from the Process Taxonomy section above. Use `gen_random_uuid()` for IDs. Set `sort_order` sequentially. This must include all 9 CH categories with their subtasks and all 10 MH categories with their subtasks. Every single sub-task listed above must be seeded.
+- [x] **1.4 Create seed data migration** - Create `supabase/migrations/002_seed_categories.sql` that inserts ALL categories and subtasks from the Process Taxonomy section above. Use `gen_random_uuid()` for IDs. Set `sort_order` sequentially. This must include all 9 CH categories with their subtasks and all 10 MH categories with their subtasks. Every single sub-task listed above must be seeded.
 
 - [ ] **1.5 Set up Row Level Security** - Create `supabase/migrations/003_rls_policies.sql`. Enable RLS on all tables. Policies: (1) users can read their own row and supervisors can read all users on their team, (2) categories and subtasks are readable by all authenticated users, (3) log_entries: users can INSERT their own, SELECT their own; supervisors can SELECT all entries for users on their team. Use `auth.uid()` for user identification.
 
