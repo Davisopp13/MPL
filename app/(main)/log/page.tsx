@@ -316,7 +316,7 @@ export default function LogPage() {
 
       {/* Step 1: Category Selection */}
       {step === 'category' && (
-        <div>
+        <div className="animate-[slideUp_150ms_ease-out]">
           <h2 className="mb-3 text-sm font-semibold text-slate-500 uppercase tracking-wide">
             Select Category
           </h2>
@@ -342,7 +342,7 @@ export default function LogPage() {
 
       {/* Step 2: Subtask Selection */}
       {step === 'subtask' && selectedCategory && (
-        <div>
+        <div className="animate-[slideUp_150ms_ease-out]">
           <h2 className="mb-3 text-sm font-semibold text-slate-500 uppercase tracking-wide">
             Select Sub-task
           </h2>
@@ -371,7 +371,7 @@ export default function LogPage() {
 
       {/* Step 3: Time Entry */}
       {step === 'time' && selectedCategory && selectedSubtask && (
-        <div className="space-y-4">
+        <div className="animate-[slideUp_150ms_ease-out] space-y-4">
           {/* Context pill */}
           <div className="flex items-center gap-2 rounded-xl border border-mpl-border bg-mpl-primary-light px-4 py-2.5">
             <span className="text-lg">{selectedCategory.icon}</span>

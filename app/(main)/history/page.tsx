@@ -164,7 +164,7 @@ export default function HistoryPage() {
   const todayOccurrences = todayEntries.reduce((sum, e) => sum + e.occurrences, 0)
 
   return (
-    <div className="space-y-6">
+    <div className="animate-[slideUp_150ms_ease-out] space-y-6">
       {/* Today's Summary Card */}
       <div className="rounded-2xl bg-gradient-to-br from-mpl-primary to-mpl-primary-dark p-5 text-white">
         <p className="text-sm font-medium text-white/80">Today&apos;s Total</p>

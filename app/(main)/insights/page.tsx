@@ -251,7 +251,7 @@ export default function InsightsPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="animate-[slideUp_150ms_ease-out] space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3">
         {cards.map((card) => (
@@ -300,7 +300,7 @@ export default function InsightsPage() {
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-mpl-primary to-mpl-primary-dark transition-all duration-300"
+                      className="h-full rounded-full bg-gradient-to-r from-mpl-primary to-mpl-primary-dark animate-[fillBar_200ms_ease-out]"
                       style={{ width: `${cat.percentage}%` }}
                     />
                   </div>

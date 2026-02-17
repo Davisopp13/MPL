@@ -263,7 +263,7 @@ export default function TeamPage() {
           <button
             key={preset}
             onClick={() => handleDatePresetChange(preset)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-[0.97] ${
               datePreset === preset
                 ? 'bg-mpl-primary-light text-mpl-primary'
                 : 'border border-mpl-border bg-mpl-surface text-slate-500'
@@ -280,7 +280,7 @@ export default function TeamPage() {
           <button
             key={option}
             onClick={() => setFilter(option)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-[0.97] ${
               filter === option
                 ? 'bg-mpl-primary text-white'
                 : 'border border-mpl-border bg-mpl-surface text-slate-500'

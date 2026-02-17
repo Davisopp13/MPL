@@ -475,3 +475,21 @@
   - sm: breakpoint in Tailwind is 640px — for 320px-430px mobile-only range, the base styles ARE the mobile styles
   - break-words on text prevents single long words from causing overflow in constrained containers
 ---
+
+## Iteration 27 - 7.3 Add page transitions and micro-interactions
+- Added slideUp CSS keyframe animation (150ms ease-out, translateY 8px to 0 with opacity)
+- Added fillBar CSS keyframe animation for progress bar initial fill effect
+- Applied slide-up animation to all 3 log flow step transitions (category, subtask, time entry)
+- Applied slide-up animation to history and insights page content on load
+- Applied fillBar animation to insights category breakdown progress bars
+- Added active:scale-[0.97] press feedback to team page filter buttons (date preset + team filter)
+- All animations kept under 200ms per PRD spec
+- Toast notifications already had fadeIn animation from previous iterations
+- Files changed: app/globals.css, app/(main)/log/page.tsx, app/(main)/history/page.tsx, app/(main)/insights/page.tsx, app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Tailwind arbitrary animations: animate-[keyframeName_150ms_ease-out] maps to CSS keyframe animations without needing tailwind.config entries
+  - slideUp (translateY 8px → 0 + opacity) is a subtle, fast animation for content appearing — better than slideIn from sides
+  - fillBar animation with CSS `from { width: 0% }` lets the bar animate from 0 to its final width set via inline style
+  - active:scale-[0.97] is the standard press feedback pattern used across all interactive buttons in the app
+  - transition-all vs transition-colors: use transition-all when scale transform is also needed alongside color changes
+---
