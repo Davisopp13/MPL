@@ -115,3 +115,22 @@
   - Team selection uses border-2 with conditional styling for selected vs unselected states
   - router.replace() instead of router.push() so user can't navigate back to onboarding
 ---
+
+## Iteration 8 - 2.1 Create bottom navigation
+- Created components/BottomNav.tsx with 4 tabs: Log (➕), History (📋), Insights (📊), Team (👥)
+- Active tab shows MPL blue with top border accent, inactive tabs show slate-400
+- Includes safe area padding for iOS via env(safe-area-inset-bottom)
+- Created app/(main)/layout.tsx as server component that fetches user profile from Supabase
+- Header now shows user initials avatar (circle) and CH/MH team badge (amber for CH, blue for MH)
+- Updated MplHeader to accept optional initials and team props (backward compatible)
+- Created placeholder pages for all 4 tabs: log, history, insights, team
+- Updated app/page.tsx to redirect to /log (since main content lives in (main) route group now)
+- Files changed: components/BottomNav.tsx, components/MplHeader.tsx, app/(main)/layout.tsx, app/(main)/log/page.tsx, app/(main)/history/page.tsx, app/(main)/insights/page.tsx, app/(main)/team/page.tsx, app/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - The (main) layout is a server component — fetches user profile and passes initials/team to MplHeader
+  - BottomNav is a client component (needs usePathname for active tab detection)
+  - Safe area padding uses env(safe-area-inset-bottom) CSS function for iOS notch devices
+  - pb-24 on main content prevents bottom nav from overlapping page content
+  - Root page.tsx redirects to /log — the (main) route group handles the authenticated shell
+  - getInitials helper: takes first letter of first name + first letter of last name
+---
