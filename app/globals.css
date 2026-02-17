@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@theme inline {
+  --color-mpl-primary: #0EA5E9;
+  --color-mpl-primary-dark: #0284C7;
+  --color-mpl-primary-light: #E0F2FE;
+  --color-mpl-accent: #F59E0B;
+  --color-mpl-bg: #F8FAFC;
+  --color-mpl-surface: #FFFFFF;
+  --color-mpl-border: #E2E8F0;
+}
+
+body {
+  background: var(--color-mpl-bg);
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}

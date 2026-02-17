@@ -1,0 +1,25 @@
+# MPL Build Progress
+
+## Learnings
+- Tailwind v4 uses CSS-based `@theme` for custom colors, not just `tailwind.config.ts`. Use `@config` directive in globals.css to link the config.
+- `create-next-app` refuses project names with capitals — use temp dir and copy approach
+- When copying from `/tmp`, symlinks in `node_modules/.bin/` break — must `rm -rf node_modules && npm install` after copy
+- Vitest needs `passWithNoTests: true` in config to avoid exit code 1 when no test files exist yet
+
+---
+
+## Iteration 1 - 1.1 Initialize Next.js project
+- Initialized Next.js 16 (App Router) with TypeScript, TailwindCSS v4, ESLint
+- Created tailwind.config.ts with MPL brand colors (mpl.primary, mpl.primaryDark, mpl.primaryLight, mpl.accent, mpl.bg, mpl.surface, mpl.border)
+- Configured globals.css with @theme inline block for Tailwind v4 color tokens and system font stack
+- Created MplHeader component with blue gradient, "M" logo, title "MPL", subtitle "Manual Process Log"
+- Set up project structure: app/(main)/, components/, lib/supabase/, types/, supabase/migrations/
+- Installed Vitest + testing libraries, configured vitest.config.ts
+- Files changed: package.json, tailwind.config.ts, app/globals.css, app/layout.tsx, app/page.tsx, components/MplHeader.tsx, vitest.config.ts
+- Learnings for future iterations:
+  - Tailwind v4 color tokens use `--color-*` CSS custom properties via `@theme inline`
+  - The `@config` directive in globals.css bridges tailwind.config.ts with Tailwind v4
+  - System font stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
+  - Max-width 430px centered is the mobile-first container approach
+  - Next.js 16 was installed (latest), which uses Turbopack by default
+---
