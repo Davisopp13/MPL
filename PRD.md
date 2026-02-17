@@ -132,7 +132,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 ### Phase 5: Team / Supervisor View
 
-- [ ] **5.1 Build team overview page** - Create `app/(main)/team/page.tsx`. If user role is 'supervisor': show team aggregate card (total hours this week, member count), CH/MH/All filter buttons, and list of team members. Each member card shows: initials avatar, name, team badge (CH amber / MH blue), top category with icon, entry count, and total minutes. If user role is 'member': show a message that this view is for supervisors, or show read-only view of their own stats.
+- [x] **5.1 Build team overview page** - Create `app/(main)/team/page.tsx`. If user role is 'supervisor': show team aggregate card (total hours this week, member count), CH/MH/All filter buttons, and list of team members. Each member card shows: initials avatar, name, team badge (CH amber / MH blue), top category with icon, entry count, and total minutes. If user role is 'member': show a message that this view is for supervisors, or show read-only view of their own stats.
 
 - [ ] **5.2 Build team data queries** - Create server action or API route to aggregate team data: total minutes per member this week, top category per member, entry count per member. Supervisors can only see data for users on their same team. Use Supabase RLS to enforce this. Include date range filtering (default: current week).
 

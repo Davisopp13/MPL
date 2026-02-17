@@ -338,3 +338,26 @@
   - The subtask join is added alongside existing category join: select('*, categories(label, icon), subtasks(label)')
   - Amber color palette for the card: #FEF3C7 (bg), #FDE68A (icon bg), #92400E (secondary text), #78350F (primary text)
 ---
+
+## Iteration 20 - 5.1 Build team overview page
+- Built complete team overview page at app/(main)/team/page.tsx as a client component
+- Supervisor view: gradient blue aggregate card (total hours this week, member count), CH/MH/All filter pills, member cards list
+- Member view: informational card directing to Insights for personal stats
+- Team aggregate card: gradient blue, shows weekly total hours and member count, updates when filter changes
+- Filter buttons: All/CH/MH pills with active state (blue fill), only relevant for supervisors
+- Member cards: initials avatar (blue circle), name, CH/MH team badge (amber/blue), top category with icon, entry count, total minutes (bold blue)
+- Data fetching: fetches user profile, team members, and this week's log entries with category joins
+- Aggregation in JS: builds per-member stats from entries using Map, finds top category per member by minutes
+- Week range calculation: Monday-Sunday using getWeekRange() helper
+- Sorted members by total minutes descending
+- Loading skeleton: aggregate card + filter pills + member card placeholders
+- Error/empty states handled
+- Files changed: app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - RLS enforces team access — supervisors can only see their own team's users and entries
+  - The .in('user_id', memberIds) filter fetches entries for all team members in one query
+  - getWeekRange() computes Monday 00:00:00 to Sunday 23:59:59 — uses (dayOfWeek + 6) % 7 for Monday-based weeks
+  - Filter state is local — just filters the already-fetched memberStats array, no re-fetch needed
+  - Team badge colors: CH = amber (#FEF3C7/#92400E), MH = blue (#E0F2FE/#0284C7) — same pattern used in header
+  - getInitials helper duplicated from layout.tsx — could be extracted to a shared util but kept local for simplicity
+---
