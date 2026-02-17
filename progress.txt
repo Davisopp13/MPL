@@ -80,3 +80,20 @@
   - INSERT policies use WITH CHECK (not USING) to validate new rows
   - UPDATE policies need both USING (which rows can be seen) and WITH CHECK (what the new values can be)
 ---
+
+## Iteration 6 - 1.6 Set up Supabase Auth
+- Created login page with magic link auth at app/login/page.tsx
+- Created auth callback handler at app/auth/callback/route.ts
+- Created middleware.ts for route protection
+- Login page: email input, "Send Magic Link" button, MPL branding, success state with "Check your email" message
+- Auth callback: exchanges code for session, checks if user exists in users table, redirects to /onboard if not
+- Middleware: refreshes session, protects all routes except /login and /auth/callback, redirects unauthenticated users to /login, redirects authenticated users without users table row to /onboard, redirects logged-in users away from /login to /
+- Files changed: app/login/page.tsx, app/auth/callback/route.ts, middleware.ts, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Middleware needs its own Supabase client (not the server.ts one) because it must set cookies on the response object
+  - The middleware cookie pattern: getAll reads from request.cookies, setAll writes to both request.cookies and response.cookies
+  - Auth callback uses exchangeCodeForSession (PKCE flow) — this is the standard Supabase magic link pattern
+  - Middleware matcher excludes static assets and images to avoid unnecessary auth checks
+  - Onboarding check in middleware: query users table by auth.uid() — if no row, redirect to /onboard
+  - signInWithOtp with emailRedirectTo sends the magic link to the specified callback URL
+---

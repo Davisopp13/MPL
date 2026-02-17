@@ -96,7 +96,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **1.5 Set up Row Level Security** - Create `supabase/migrations/003_rls_policies.sql`. Enable RLS on all tables. Policies: (1) users can read their own row and supervisors can read all users on their team, (2) categories and subtasks are readable by all authenticated users, (3) log_entries: users can INSERT their own, SELECT their own; supervisors can SELECT all entries for users on their team. Use `auth.uid()` for user identification.
 
-- [ ] **1.6 Set up Supabase Auth** - Create `app/login/page.tsx` with magic link auth using Supabase. Minimal UI: email input, "Send Magic Link" button, MPL branding. Create `app/auth/callback/route.ts` to handle the auth callback. Create middleware at `middleware.ts` to protect all routes except `/login` and `/auth/callback`. After first login, redirect to an onboarding step if user doesn't exist in the users table yet.
+- [x] **1.6 Set up Supabase Auth** - Create `app/login/page.tsx` with magic link auth using Supabase. Minimal UI: email input, "Send Magic Link" button, MPL branding. Create `app/auth/callback/route.ts` to handle the auth callback. Create middleware at `middleware.ts` to protect all routes except `/login` and `/auth/callback`. After first login, redirect to an onboarding step if user doesn't exist in the users table yet.
 
 - [ ] **1.7 Create onboarding flow** - Create `app/onboard/page.tsx`. After first auth, user enters their name and selects their team (CH or MH) via two large buttons. This creates their row in the users table. Redirect to `/` after completion. If user already exists in users table, skip onboarding and go to `/`.
 
