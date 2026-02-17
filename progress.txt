@@ -193,3 +193,25 @@
   - The entryMode state controls which input UI is shown (quick vs timer)
   - inputMode="numeric" on inputs gives mobile users a number pad without restricting to type="number" quirks
 ---
+
+## Iteration 12 - 2.5 Build timer mode
+- Replaced timer placeholder with full timer UI in app/(main)/log/page.tsx
+- Large monospace MM:SS display (text-5xl font-mono)
+- Timer controls: Start button (blue), Pause button (red), Resume button (blue), Reset button (border style)
+- Timer runs via setInterval in a useEffect keyed on timerRunning state
+- useRef holds the interval ID for proper cleanup
+- Start/Pause/Resume/Reset via useCallback handlers
+- When paused with time > 0, shows "X minutes will be logged" helper text
+- timerMinutes uses Math.ceil(timerSeconds / 60) to round up partial minutes
+- effectiveMinutes now derives from timerMinutes when in timer mode
+- canSubmit now requires !timerRunning (submit disabled while timer actively running)
+- resetTimeEntry() also resets timerRunning and timerSeconds when navigating back
+- formatTimerDisplay helper formats seconds to MM:SS with zero-padding
+- Files changed: app/(main)/log/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Timer pattern: useRef for interval ID + useEffect keyed on boolean running state + cleanup in return
+  - Math.ceil(seconds / 60) converts seconds to minutes rounding up (so 61 seconds = 2 minutes)
+  - useCallback for timer controls prevents unnecessary re-renders of child components
+  - Timer state (timerSeconds, timerRunning) is separate from quick entry state — both coexist, entryMode switches which is used
+  - The verified field in log_entries will be true for timer entries (timerSeconds > 0) — task 2.6 will implement this
+---

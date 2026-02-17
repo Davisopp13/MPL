@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Category, Subtask } from '@/types/database'
 
@@ -25,6 +25,42 @@ export default function LogPage() {
   const [customMinutes, setCustomMinutes] = useState('')
   const [occurrences, setOccurrences] = useState(1)
   const [note, setNote] = useState('')
+
+  // Timer state
+  const [timerSeconds, setTimerSeconds] = useState(0)
+  const [timerRunning, setTimerRunning] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Timer interval effect
+  useEffect(() => {
+    if (timerRunning) {
+      timerRef.current = setInterval(() => {
+        setTimerSeconds(prev => prev + 1)
+      }, 1000)
+    } else if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [timerRunning])
+
+  const startTimer = useCallback(() => setTimerRunning(true), [])
+  const pauseTimer = useCallback(() => setTimerRunning(false), [])
+  const resetTimer = useCallback(() => {
+    setTimerRunning(false)
+    setTimerSeconds(0)
+  }, [])
+
+  function formatTimerDisplay(totalSeconds: number): string {
+    const mins = Math.floor(totalSeconds / 60)
+    const secs = totalSeconds % 60
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  }
 
   useEffect(() => {
     async function fetchCategories() {
@@ -88,6 +124,8 @@ export default function LogPage() {
     setCustomMinutes('')
     setOccurrences(1)
     setNote('')
+    setTimerRunning(false)
+    setTimerSeconds(0)
   }
 
   function handleChipSelect(minutes: number) {
@@ -117,10 +155,11 @@ export default function LogPage() {
   }
 
   // Compute the effective minutes for the submit button label
+  const timerMinutes = Math.ceil(timerSeconds / 60)
   const effectiveMinutes = entryMode === 'quick'
     ? (selectedChip ?? (customMinutes ? parseInt(customMinutes, 10) : 0))
-    : 0 // Timer mode will be handled in task 2.5
-  const canSubmit = effectiveMinutes > 0
+    : timerMinutes
+  const canSubmit = effectiveMinutes > 0 && !timerRunning
 
   if (loading) {
     return (
@@ -315,11 +354,50 @@ export default function LogPage() {
             </div>
           )}
 
-          {/* Timer mode placeholder (to be built in task 2.5) */}
+          {/* Timer mode */}
           {entryMode === 'timer' && (
             <div className="rounded-2xl border border-mpl-border bg-mpl-surface p-8 text-center">
-              <p className="text-4xl font-mono font-bold text-slate-800">00:00</p>
-              <p className="mt-2 text-sm text-slate-400">Timer coming soon</p>
+              {/* Timer display */}
+              <p className="font-mono text-5xl font-bold text-slate-800">
+                {formatTimerDisplay(timerSeconds)}
+              </p>
+
+              {/* Timer controls */}
+              <div className="mt-6 flex items-center justify-center gap-3">
+                {!timerRunning && timerSeconds > 0 && (
+                  <button
+                    type="button"
+                    onClick={resetTimer}
+                    className="rounded-xl border border-mpl-border bg-mpl-surface px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors duration-150 active:scale-[0.97]"
+                  >
+                    Reset
+                  </button>
+                )}
+                {timerRunning ? (
+                  <button
+                    type="button"
+                    onClick={pauseTimer}
+                    className="rounded-xl bg-red-500 px-6 py-2.5 text-sm font-bold text-white transition-colors duration-150 active:scale-[0.97]"
+                  >
+                    Pause
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={startTimer}
+                    className="rounded-xl bg-mpl-primary px-6 py-2.5 text-sm font-bold text-white transition-colors duration-150 active:scale-[0.97]"
+                  >
+                    {timerSeconds > 0 ? 'Resume' : 'Start'}
+                  </button>
+                )}
+              </div>
+
+              {/* Timer info */}
+              {timerSeconds > 0 && !timerRunning && (
+                <p className="mt-3 text-sm text-slate-500">
+                  {timerMinutes} {timerMinutes === 1 ? 'minute' : 'minutes'} will be logged
+                </p>
+              )}
             </div>
           )}
 
