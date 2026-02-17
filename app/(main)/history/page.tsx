@@ -131,8 +131,35 @@ export default function HistoryPage() {
 
   const dateGroups = groupEntriesByDate(entries)
 
+  // Calculate today's totals
+  const todayKey = getDateKey(new Date().toISOString())
+  const todayEntries = entries.filter((e) => getDateKey(e.created_at) === todayKey)
+  const todayMinutes = todayEntries.reduce((sum, e) => sum + e.minutes, 0)
+  const todayEntryCount = todayEntries.length
+  const todayOccurrences = todayEntries.reduce((sum, e) => sum + e.occurrences, 0)
+
   return (
     <div className="space-y-6">
+      {/* Today's Summary Card */}
+      <div className="rounded-2xl bg-gradient-to-br from-mpl-primary to-mpl-primary-dark p-5 text-white">
+        <p className="text-sm font-medium text-white/80">Today&apos;s Total</p>
+        <p className="mt-1 text-4xl font-bold">{todayMinutes}m</p>
+        <div className="mt-3 flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm text-white/70">📝</span>
+            <span className="text-sm font-medium text-white/90">
+              {todayEntryCount} {todayEntryCount === 1 ? 'entry' : 'entries'}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm text-white/70">🔁</span>
+            <span className="text-sm font-medium text-white/90">
+              {todayOccurrences} {todayOccurrences === 1 ? 'occurrence' : 'occurrences'}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {dateGroups.map((group) => (
         <div key={group.label}>
           {/* Date group header */}

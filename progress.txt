@@ -269,3 +269,18 @@
   - The history entry card layout: flex row with icon (shrink-0), middle content (flex-1 min-w-0), and minutes (shrink-0 text-right)
   - truncate class on note prevents long notes from breaking the card layout
 ---
+
+## Iteration 16 - 3.3 Build history summary card
+- Added gradient blue summary card at top of history page showing today's totals
+- Card shows: "Today's Total" label, large minute count (4xl bold), entry count, total occurrences
+- Gradient uses from-mpl-primary to-mpl-primary-dark (blue gradient per PRD)
+- Today's stats calculated by filtering entries where getDateKey matches today's date key
+- Pluralization handled for "entry/entries" and "occurrence/occurrences"
+- Card always shows even when today has 0 entries (displays 0m, 0 entries, 0 occurrences)
+- Files changed: app/(main)/history/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Reuse existing helper functions (getDateKey) for calculating today's filter rather than duplicating logic
+  - The summary card renders above the date groups in the same space-y-6 container
+  - bg-gradient-to-br with from/to Tailwind utilities creates the blue gradient card
+  - text-white/80 and text-white/70 create subtle opacity variants for hierarchy in white-on-blue text
+---
