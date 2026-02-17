@@ -153,3 +153,21 @@
   - active:scale-[0.97] gives a nice press feedback on mobile buttons
   - The flow will grow: task 2.3 adds subtask selection, 2.4 adds time entry, 2.5 adds timer, 2.6 adds submission
 ---
+
+## Iteration 10 - 2.3 Build sub-task selection (Step 2 of logging)
+- Replaced placeholder subtask section with vertical list of tappable subtask rows
+- Each row shows subtask label with chevron (›), sorted by sort_order
+- Added selectedSubtask state to track the chosen subtask
+- Added handleSubtaskSelect function that sets subtask and advances to time step
+- Updated breadcrumb to show Category > Sub-task path when on time step
+- Breadcrumb category label is clickable (returns to subtask step) when on time step
+- Back navigation clears selectedSubtask appropriately at each step
+- Added placeholder for Step 3 (time entry) referencing the selected subtask
+- Changed breadcrumb category from <span> to <button> for accessibility
+- Files changed: app/(main)/log/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Subtasks are already fetched with categories via `select('*, subtasks(*)')` — no extra query needed for step 2
+  - Array.sort() mutates in place — used inline `.sort((a, b) => a.sort_order - b.sort_order)` on render
+  - The overflow-hidden on the container with rounded-xl clips the border-radius on child buttons
+  - Breadcrumb navigation allows going back to subtask step from time step by clicking category label
+---

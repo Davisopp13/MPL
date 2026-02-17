@@ -14,6 +14,7 @@ export default function LogPage() {
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState<LogStep>('category')
   const [selectedCategory, setSelectedCategory] = useState<CategoryWithSubtasks | null>(null)
+  const [selectedSubtask, setSelectedSubtask] = useState<Subtask | null>(null)
 
   useEffect(() => {
     async function fetchCategories() {
@@ -54,12 +55,19 @@ export default function LogPage() {
     setStep('subtask')
   }
 
+  function handleSubtaskSelect(subtask: Subtask) {
+    setSelectedSubtask(subtask)
+    setStep('time')
+  }
+
   function handleBack() {
     if (step === 'subtask') {
       setStep('category')
       setSelectedCategory(null)
+      setSelectedSubtask(null)
     } else if (step === 'time') {
       setStep('subtask')
+      setSelectedSubtask(null)
     }
   }
 
@@ -100,12 +108,21 @@ export default function LogPage() {
             ←
           </button>
           <div className="flex items-center gap-1.5 text-sm text-slate-500">
-            <span
-              className={step === 'subtask' ? 'font-medium text-slate-800' : 'cursor-pointer text-mpl-primary'}
-              onClick={step !== 'subtask' ? () => { setStep('category'); setSelectedCategory(null) } : undefined}
+            <button
+              type="button"
+              className={step === 'subtask' ? 'font-medium text-slate-800' : 'cursor-pointer text-mpl-primary hover:underline'}
+              onClick={step !== 'subtask' ? () => { setStep('subtask'); setSelectedSubtask(null) } : undefined}
             >
               {selectedCategory?.icon} {selectedCategory?.label}
-            </span>
+            </button>
+            {step === 'time' && selectedSubtask && (
+              <>
+                <span className="text-slate-300">›</span>
+                <span className="font-medium text-slate-800">
+                  {selectedSubtask.label}
+                </span>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -136,11 +153,40 @@ export default function LogPage() {
         </div>
       )}
 
-      {/* Placeholder for Step 2: Subtask Selection (to be built in 2.3) */}
+      {/* Step 2: Subtask Selection */}
       {step === 'subtask' && selectedCategory && (
+        <div>
+          <h2 className="mb-3 text-sm font-semibold text-slate-500 uppercase tracking-wide">
+            Select Sub-task
+          </h2>
+          <div className="overflow-hidden rounded-xl border border-mpl-border bg-mpl-surface">
+            {selectedCategory.subtasks
+              .sort((a, b) => a.sort_order - b.sort_order)
+              .map((subtask, index) => (
+                <button
+                  key={subtask.id}
+                  onClick={() => handleSubtaskSelect(subtask)}
+                  className={`flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors duration-150 active:bg-mpl-primary-light ${
+                    index < selectedCategory.subtasks.length - 1
+                      ? 'border-b border-mpl-border'
+                      : ''
+                  }`}
+                >
+                  <span className="text-sm font-medium text-slate-800">
+                    {subtask.label}
+                  </span>
+                  <span className="text-slate-300">›</span>
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Placeholder for Step 3: Time Entry (to be built in 2.4) */}
+      {step === 'time' && selectedCategory && selectedSubtask && (
         <div className="rounded-2xl border border-mpl-border bg-mpl-surface p-6 text-center">
           <p className="text-sm text-slate-500">
-            Sub-task selection coming soon for {selectedCategory.label}
+            Time entry coming soon for {selectedSubtask.label}
           </p>
         </div>
       )}
