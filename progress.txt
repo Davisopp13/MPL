@@ -284,3 +284,22 @@
   - bg-gradient-to-br with from/to Tailwind utilities creates the blue gradient card
   - text-white/80 and text-white/70 create subtle opacity variants for hierarchy in white-on-blue text
 ---
+
+## Iteration 17 - 4.1 Build KPI cards
+- Built insights page at app/(main)/insights/page.tsx as a client component
+- Fetches all user's log_entries from Supabase (no joins needed — only need minutes, occurrences, created_at)
+- 2x2 grid of KPI stat cards: Total Minutes (blue), Hours/Week (amber), Total Entries (green), Total Occurrences (red)
+- Each card has: icon in tinted rounded square, large bold value with suffix, label text
+- Hours/Week calculated from date range span: totalMinutes / 60 / weekSpan, minimum 1 week span
+- calculateKpis pure function for easy testability
+- Loading skeleton: 4 animated placeholder cards matching 2x2 grid
+- Empty state: "Log entries to see insights" message
+- Error state: red card with error message
+- Files changed: app/(main)/insights/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Insights page only needs log_entries fields (minutes, occurrences, created_at) — no joins required for KPIs
+  - Hours/Week uses Math.max(..., 1) for weekSpan to avoid division issues when all entries are on the same day
+  - Card color scheme: blue (#E0F2FE/#0284C7), amber (#FEF3C7/#92400E), green (#ECFDF5/#065F46), red (#FEF2F2/#991B1B)
+  - The page wraps content in space-y-6 div — tasks 4.2 and 4.3 will add sections below the KPI grid
+  - toLocaleString() formats large numbers with commas for readability
+---

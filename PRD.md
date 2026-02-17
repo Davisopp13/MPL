@@ -124,7 +124,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 ### Phase 4: Insights Dashboard
 
-- [ ] **4.1 Build KPI cards** - Create `app/(main)/insights/page.tsx`. Top section: 2x2 grid of stat cards: Total Minutes Logged (blue), Hours/Week (amber), Total Entries (green), Total Occurrences (red). Data aggregated from user's log_entries.
+- [x] **4.1 Build KPI cards** - Create `app/(main)/insights/page.tsx`. Top section: 2x2 grid of stat cards: Total Minutes Logged (blue), Hours/Week (amber), Total Entries (green), Total Occurrences (red). Data aggregated from user's log_entries.
 
 - [ ] **4.2 Build category breakdown chart** - Below KPI cards, show "Time by Category" section. For each category with logged time: icon + label on left, minutes + percentage on right, horizontal progress bar (blue gradient, relative to highest category). Sorted by minutes descending.
 
