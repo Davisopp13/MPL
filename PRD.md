@@ -90,7 +90,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **1.2 Set up Supabase client and types** - Install `@supabase/supabase-js` and `@supabase/ssr`. Create `lib/supabase/client.ts` (browser client) and `lib/supabase/server.ts` (server client). Create `types/database.ts` with TypeScript types matching the database schema above. Use environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
-- [ ] **1.3 Create Supabase migration for schema** - Create a SQL migration file at `supabase/migrations/001_initial_schema.sql` that creates all 4 tables (users, categories, subtasks, log_entries) with the exact schema defined above. Include indexes on `log_entries(user_id)`, `log_entries(category_id)`, `log_entries(created_at)`, `subtasks(category_id)`, and `categories(team)`.
+- [x] **1.3 Create Supabase migration for schema** - Create a SQL migration file at `supabase/migrations/001_initial_schema.sql` that creates all 4 tables (users, categories, subtasks, log_entries) with the exact schema defined above. Include indexes on `log_entries(user_id)`, `log_entries(category_id)`, `log_entries(created_at)`, `subtasks(category_id)`, and `categories(team)`.
 
 - [ ] **1.4 Create seed data migration** - Create `supabase/migrations/002_seed_categories.sql` that inserts ALL categories and subtasks from the Process Taxonomy section above. Use `gen_random_uuid()` for IDs. Set `sort_order` sequentially. This must include all 9 CH categories with their subtasks and all 10 MH categories with their subtasks. Every single sub-task listed above must be seeded.
 

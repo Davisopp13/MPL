@@ -38,3 +38,16 @@
   - Database types follow Supabase generated format: Row (full), Insert (required fields only), Update (all optional)
   - Convenience aliases like `User`, `Category` etc. make imports cleaner throughout the app
 ---
+
+## Iteration 3 - 1.3 Create Supabase migration for schema
+- Created supabase/migrations/001_initial_schema.sql with all 4 tables
+- Tables: users (PK references auth.users), categories, subtasks, log_entries
+- All CHECK constraints match PRD: team IN ('CH','MH'), role IN ('member','supervisor'), minutes > 0, occurrences > 0
+- All foreign keys: subtasks→categories, log_entries→users/categories/subtasks
+- Created 5 indexes: log_entries(user_id), log_entries(category_id), log_entries(created_at), subtasks(category_id), categories(team)
+- Files changed: supabase/migrations/001_initial_schema.sql
+- Learnings for future iterations:
+  - SQL migrations are pure SQL files — no TypeScript compilation needed, just validate with tsc that nothing else broke
+  - Schema matches types/database.ts exactly — future iterations can rely on this consistency
+  - The users table PK references auth.users(id) — Supabase Auth must be set up before users can be inserted
+---
