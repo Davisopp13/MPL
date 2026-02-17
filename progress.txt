@@ -134,3 +134,22 @@
   - Root page.tsx redirects to /log — the (main) route group handles the authenticated shell
   - getInitials helper: takes first letter of first name + first letter of last name
 ---
+
+## Iteration 9 - 2.2 Build category selection (Step 1 of logging)
+- Created the 3-step logging flow page at app/(main)/log/page.tsx as a client component
+- Fetches categories with subtasks from Supabase, filtered by user's team
+- Displays categories in a 2-column grid with icon, label, and sub-task count
+- Tapping a category sets it as selected and advances to step 2 (subtask)
+- Breadcrumb navigation with back arrow shows when not on category step
+- Skeleton loading state with animated placeholders while data loads
+- Error state with styled error message
+- Placeholder for subtask step (to be built in task 2.3)
+- Files changed: app/(main)/log/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - The log page is a client component managing multi-step state (step, selectedCategory, selectedSubtask)
+  - Categories are fetched with `select('*, subtasks(*)')` to get subtask count and data for step 2
+  - The CategoryWithSubtasks type extends Category with subtasks array — needed because Supabase joins aren't in the generated types
+  - The (main)/layout.tsx doesn't pass user profile to children — each page fetches what it needs from Supabase client
+  - active:scale-[0.97] gives a nice press feedback on mobile buttons
+  - The flow will grow: task 2.3 adds subtask selection, 2.4 adds time entry, 2.5 adds timer, 2.6 adds submission
+---

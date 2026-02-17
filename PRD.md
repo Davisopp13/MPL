@@ -104,7 +104,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **2.1 Create bottom navigation** - Build `components/BottomNav.tsx`. Fixed bottom bar with 4 tabs: Log (➕), History (📋), Insights (📊), Team (👥). Active tab shows MPL blue with top border accent. Include safe area padding for mobile. Use `app/(main)/layout.tsx` to wrap all authenticated pages with this nav + the MPL header. Header should show the user's initials avatar and a CH/MH badge.
 
-- [ ] **2.2 Build category selection (Step 1 of logging)** - Create `app/(main)/log/page.tsx`. Fetch categories from Supabase filtered by the user's team. Display as a 2-column grid of cards, each showing the icon, label, and sub-task count. Tapping a category advances to sub-task selection. Show breadcrumb navigation with back arrow at top.
+- [x] **2.2 Build category selection (Step 1 of logging)** - Create `app/(main)/log/page.tsx`. Fetch categories from Supabase filtered by the user's team. Display as a 2-column grid of cards, each showing the icon, label, and sub-task count. Tapping a category advances to sub-task selection. Show breadcrumb navigation with back arrow at top.
 
 - [ ] **2.3 Build sub-task selection (Step 2 of logging)** - After category selection, display the category's sub-tasks as a vertical list of tappable rows. Each row shows the sub-task label with a chevron. Tapping advances to the time entry step. Breadcrumb updates to show Category > Sub-task path. Back navigation returns to category grid.
 
