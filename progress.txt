@@ -438,3 +438,21 @@
   - The banner sits between the header and main content in the layout — no fixed positioning needed since it flows naturally
   - localStorage persistence ensures the banner respects user's dismiss choice across sessions
 ---
+
+## Iteration 25 - 7.1 Add loading states and error handling
+- Enhanced skeleton loading states for all 4 pages (log, history, insights, team) to better represent actual content layout
+- Added retry buttons to all error states across all pages (log, history, insights, team)
+- Error states now show warning icon, styled error message, and a Retry button that reloads the page
+- Enhanced empty states with larger icons and better spacing (history, insights, team)
+- Team page empty state for filtered members now shows contextual message based on active filter
+- Log page: category grid skeletons now match card layout (icon + text + subtext placeholders)
+- History page: skeleton shows summary card placeholder + date group header + entry card placeholders
+- Insights page: skeleton shows KPI card placeholders + category breakdown chart skeleton
+- Team page: skeleton shows gradient aggregate card + filter pill placeholders + member card placeholders
+- Files changed: app/(main)/log/page.tsx, app/(main)/history/page.tsx, app/(main)/insights/page.tsx, app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - window.location.reload() is the simplest retry mechanism for client components that fetch in useEffect — avoids needing to extract fetch logic into a separate callable function
+  - Skeleton loaders that mirror the actual layout shape (matching heights, widths, and positions) feel much smoother than generic rectangles
+  - Using gradient opacity (from-mpl-primary/20) creates subtle tinted skeleton cards for gradient sections
+  - Empty states benefit from slightly larger padding (p-8 vs p-6) and bigger icons (text-3xl) for visual weight
+---

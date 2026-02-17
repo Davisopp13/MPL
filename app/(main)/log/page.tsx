@@ -238,8 +238,12 @@ export default function LogPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="h-28 animate-pulse rounded-xl border border-mpl-border bg-mpl-surface"
-            />
+              className="flex flex-col items-start rounded-xl border border-mpl-border bg-mpl-surface p-4"
+            >
+              <div className="h-8 w-8 animate-pulse rounded-lg bg-slate-100" />
+              <div className="mt-2 h-4 w-20 animate-pulse rounded bg-slate-200" />
+              <div className="mt-1 h-3 w-14 animate-pulse rounded bg-slate-100" />
+            </div>
           ))}
         </div>
       </div>
@@ -249,7 +253,18 @@ export default function LogPage() {
   if (error) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-2xl">⚠️</p>
+        <p className="mt-2 text-sm font-semibold text-red-700">{error}</p>
+        <button
+          onClick={() => {
+            setError(null)
+            setLoading(true)
+            window.location.reload()
+          }}
+          className="mt-3 rounded-xl bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 transition-colors duration-150 active:scale-[0.97] hover:bg-red-200"
+        >
+          Retry
+        </button>
       </div>
     )
   }
