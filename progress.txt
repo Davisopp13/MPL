@@ -235,3 +235,25 @@
   - After successful submission, state resets in order: resetTimeEntry() → clear selections → set step to 'category'
   - The toast persists across step changes since it's rendered at the top of the component, outside step-conditional blocks
 ---
+
+## Iteration 14 - 3.1 Build history page with date grouping
+- Built complete history page at app/(main)/history/page.tsx as a client component
+- Fetches user's log_entries from Supabase with JOIN on categories(label, icon) and subtasks(label)
+- Orders by created_at DESC
+- Groups entries by date using a Map: "Today", "Yesterday", then formatted dates (e.g., "Wed, Feb 12")
+- Each date group header shows the label and daily total minutes in MPL blue
+- Entry cards show: category icon in blue-tinted square, category label, TIMER/MANUAL badge, subtask name in blue, optional truncated note, timestamp, occurrence count, bold minute display, per-occurrence average when > 1
+- TIMER badge: green bg (#ECFDF5) + green text (#065F46); MANUAL badge: amber bg (#FEF3C7) + amber text (#92400E)
+- Empty state with icon and helpful message
+- Loading skeleton with animated placeholders
+- Error state with red styling
+- Helper functions: formatDateLabel (Today/Yesterday/formatted), getDateKey (YYYY-MM-DD from timestamp), formatTime (12h AM/PM), groupEntriesByDate (Map-based grouping)
+- Files changed: app/(main)/history/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - LogEntryWithRelations type extends LogEntry with categories and subtasks join data
+  - Date grouping uses getDateKey to extract YYYY-MM-DD from ISO timestamp, then Map for O(n) grouping
+  - formatDateLabel compares dates at midnight to avoid timezone issues (appends T00:00:00)
+  - Supabase select('*, categories(label, icon), subtasks(label)') gives nested relation data
+  - The history page is read-only — no mutation needed, just fetch and display
+  - Tasks 3.2 (entry cards) and 3.3 (summary card) are already partially addressed — cards are built inline, summary card is separate
+---
