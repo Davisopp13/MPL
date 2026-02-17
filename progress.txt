@@ -23,3 +23,18 @@
   - Max-width 430px centered is the mobile-first container approach
   - Next.js 16 was installed (latest), which uses Turbopack by default
 ---
+
+## Iteration 2 - 1.2 Set up Supabase client and types
+- Installed @supabase/supabase-js and @supabase/ssr packages
+- Created lib/supabase/client.ts using createBrowserClient from @supabase/ssr, typed with Database generic
+- Created lib/supabase/server.ts using createServerClient from @supabase/ssr with cookie handling via next/headers
+- Created types/database.ts with full TypeScript types for all 4 tables (users, categories, subtasks, log_entries) including Row/Insert/Update variants and Relationships
+- Added convenience type aliases: User, UserInsert, Category, Subtask, LogEntry, LogEntryInsert
+- Files changed: package.json, lib/supabase/client.ts, lib/supabase/server.ts, types/database.ts
+- Learnings for future iterations:
+  - @supabase/ssr replaces the old @supabase/auth-helpers-nextjs package
+  - Server client needs async cookies() call in Next.js 15+ (cookies is now a promise)
+  - The setAll catch block is needed because Server Components can't set cookies — middleware handles session refresh
+  - Database types follow Supabase generated format: Row (full), Insert (required fields only), Update (all optional)
+  - Convenience aliases like `User`, `Category` etc. make imports cleaner throughout the app
+---

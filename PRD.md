@@ -88,7 +88,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **1.1 Initialize Next.js project** - Create Next.js 14+ app with App Router, TailwindCSS, and TypeScript. Configure `tailwind.config.ts` with MPL brand colors (primary: `#0EA5E9`, primaryDark: `#0284C7`, primaryLight: `#E0F2FE`). Set up project structure: `app/`, `components/`, `lib/`, `types/`. Add a basic layout with the MPL header (blue gradient, logo "M", title "MPL", subtitle "Manual Process Log").
 
-- [ ] **1.2 Set up Supabase client and types** - Install `@supabase/supabase-js` and `@supabase/ssr`. Create `lib/supabase/client.ts` (browser client) and `lib/supabase/server.ts` (server client). Create `types/database.ts` with TypeScript types matching the database schema above. Use environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- [x] **1.2 Set up Supabase client and types** - Install `@supabase/supabase-js` and `@supabase/ssr`. Create `lib/supabase/client.ts` (browser client) and `lib/supabase/server.ts` (server client). Create `types/database.ts` with TypeScript types matching the database schema above. Use environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
 - [ ] **1.3 Create Supabase migration for schema** - Create a SQL migration file at `supabase/migrations/001_initial_schema.sql` that creates all 4 tables (users, categories, subtasks, log_entries) with the exact schema defined above. Include indexes on `log_entries(user_id)`, `log_entries(category_id)`, `log_entries(created_at)`, `subtasks(category_id)`, and `categories(team)`.
 
