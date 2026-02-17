@@ -303,3 +303,21 @@
   - The page wraps content in space-y-6 div — tasks 4.2 and 4.3 will add sections below the KPI grid
   - toLocaleString() formats large numbers with commas for readability
 ---
+
+## Iteration 18 - 4.2 Build category breakdown chart
+- Added "Time by Category" section below KPI cards on insights page
+- Updated Supabase query from `select('*')` to `select('*, categories(label, icon)')` to include category join data
+- Added LogEntryWithCategory type extending LogEntry with categories relation
+- Added CategoryBreakdown type and calculateCategoryBreakdown() pure function
+- Aggregates minutes per category using Map, sorts by minutes descending
+- Each row: category icon in blue-tinted square, label, total minutes (bold blue), percentage of total
+- Horizontal progress bar with blue gradient, relative to highest category (top category = 100% bar width)
+- percentage column shows share of total minutes across all categories
+- Section wrapped in card with border, only renders when categories have data
+- Files changed: app/(main)/insights/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Two percentage concepts: bar width is relative to max category (visual comparison), text percentage is share of total (absolute contribution)
+  - calculateCategoryBreakdown is a pure function — easy to unit test
+  - LogEntryWithCategory extends LogEntry with `categories: { label: string; icon: string } | null` for the Supabase join
+  - The existing entries state type changed from LogEntry[] to LogEntryWithCategory[] since the query now includes joins
+---

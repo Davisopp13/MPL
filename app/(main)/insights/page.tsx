@@ -4,11 +4,23 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { LogEntry } from '@/types/database'
 
+type LogEntryWithCategory = LogEntry & {
+  categories: { label: string; icon: string } | null
+}
+
 type KpiData = {
   totalMinutes: number
   hoursPerWeek: number
   totalEntries: number
   totalOccurrences: number
+}
+
+type CategoryBreakdown = {
+  categoryId: string
+  label: string
+  icon: string
+  totalMinutes: number
+  percentage: number
 }
 
 function calculateKpis(entries: LogEntry[]): KpiData {
@@ -31,8 +43,36 @@ function calculateKpis(entries: LogEntry[]): KpiData {
   return { totalMinutes, hoursPerWeek, totalEntries, totalOccurrences }
 }
 
+function calculateCategoryBreakdown(entries: LogEntryWithCategory[]): CategoryBreakdown[] {
+  const categoryMap = new Map<string, { label: string; icon: string; totalMinutes: number }>()
+
+  for (const entry of entries) {
+    const existing = categoryMap.get(entry.category_id)
+    if (existing) {
+      existing.totalMinutes += entry.minutes
+    } else {
+      categoryMap.set(entry.category_id, {
+        label: entry.categories?.label ?? 'Unknown',
+        icon: entry.categories?.icon ?? '📌',
+        totalMinutes: entry.minutes,
+      })
+    }
+  }
+
+  const sorted = Array.from(categoryMap.entries())
+    .map(([categoryId, data]) => ({ categoryId, ...data, percentage: 0 }))
+    .sort((a, b) => b.totalMinutes - a.totalMinutes)
+
+  const maxMinutes = sorted[0]?.totalMinutes ?? 1
+
+  return sorted.map((item) => ({
+    ...item,
+    percentage: Math.round((item.totalMinutes / maxMinutes) * 100),
+  }))
+}
+
 export default function InsightsPage() {
-  const [entries, setEntries] = useState<LogEntry[]>([])
+  const [entries, setEntries] = useState<LogEntryWithCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,7 +85,7 @@ export default function InsightsPage() {
 
       const { data, error: fetchError } = await supabase
         .from('log_entries')
-        .select('*')
+        .select('*, categories(label, icon)')
         .eq('user_id', user.id)
 
       if (fetchError) {
@@ -54,7 +94,7 @@ export default function InsightsPage() {
         return
       }
 
-      setEntries((data as LogEntry[]) ?? [])
+      setEntries((data as LogEntryWithCategory[]) ?? [])
       setLoading(false)
     }
 
@@ -93,6 +133,8 @@ export default function InsightsPage() {
   }
 
   const kpis = calculateKpis(entries)
+  const categoryBreakdown = calculateCategoryBreakdown(entries)
+  const totalMinutesAllCategories = entries.reduce((sum, e) => sum + e.minutes, 0)
 
   const cards = [
     {
@@ -153,6 +195,46 @@ export default function InsightsPage() {
           </div>
         ))}
       </div>
+
+      {/* Category Breakdown */}
+      {categoryBreakdown.length > 0 && (
+        <div className="rounded-2xl border border-mpl-border bg-mpl-surface p-4">
+          <h2 className="mb-4 text-sm font-semibold text-slate-700">Time by Category</h2>
+          <div className="space-y-4">
+            {categoryBreakdown.map((cat) => {
+              const catPercentOfTotal = totalMinutesAllCategories > 0
+                ? Math.round((cat.totalMinutes / totalMinutesAllCategories) * 100)
+                : 0
+              return (
+                <div key={cat.categoryId}>
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E0F2FE] text-sm">
+                        {cat.icon}
+                      </span>
+                      <span className="text-sm font-medium text-slate-700">{cat.label}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm font-bold text-mpl-primary">
+                        {cat.totalMinutes.toLocaleString()}m
+                      </span>
+                      <span className="ml-1.5 text-xs text-slate-400">
+                        {catPercentOfTotal}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-mpl-primary to-mpl-primary-dark transition-all duration-300"
+                      style={{ width: `${cat.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
