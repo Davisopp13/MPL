@@ -257,3 +257,15 @@
   - The history page is read-only — no mutation needed, just fetch and display
   - Tasks 3.2 (entry cards) and 3.3 (summary card) are already partially addressed — cards are built inline, summary card is separate
 ---
+
+## Iteration 15 - 3.2 Build history entry cards
+- Entry cards were already fully implemented in iteration 14 as part of the history page build
+- All PRD requirements verified present: category icon in blue-tinted rounded square, category label with TIMER/MANUAL badge, sub-task name in blue, truncated note, clock timestamp, occurrence count (when >1), bold blue minutes, per-occurrence average
+- TIMER badge: green bg (#ECFDF5) + green text (#065F46); MANUAL badge: amber bg (#FEF3C7) + amber text (#92400E)
+- TypeScript passes, tests pass
+- Files changed: PRD.md (marked complete), progress.txt
+- Learnings for future iterations:
+  - When iteration N builds something ahead of schedule, iteration N+1 should just verify and mark complete rather than rebuilding
+  - The history entry card layout: flex row with icon (shrink-0), middle content (flex-1 min-w-0), and minutes (shrink-0 text-right)
+  - truncate class on note prevents long notes from breaking the card layout
+---

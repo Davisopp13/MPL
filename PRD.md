@@ -118,7 +118,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **3.1 Build history page with date grouping** - Create `app/(main)/history/page.tsx`. Fetch user's log_entries from Supabase, JOIN with categories and subtasks for labels/icons, ordered by `created_at DESC`. Group entries by date: "Today", "Yesterday", then formatted dates (e.g., "Wed, Feb 12"). Show daily total minutes in each group header.
 
-- [ ] **3.2 Build history entry cards** - Each entry shows: category icon in a blue-tinted rounded square, category label with TIMER (green badge) or MANUAL (amber badge), sub-task name in blue, note (truncated, if present), clock timestamp (e.g., "🕐 2:35 PM"), occurrence count (e.g., "3x occurrences"), minutes on the right (bold blue), and per-occurrence average when occurrences > 1 (e.g., "~4m/ea").
+- [x] **3.2 Build history entry cards** - Each entry shows: category icon in a blue-tinted rounded square, category label with TIMER (green badge) or MANUAL (amber badge), sub-task name in blue, note (truncated, if present), clock timestamp (e.g., "🕐 2:35 PM"), occurrence count (e.g., "3x occurrences"), minutes on the right (bold blue), and per-occurrence average when occurrences > 1 (e.g., "~4m/ea").
 
 - [ ] **3.3 Build history summary card** - At top of history page, a gradient blue card showing: "Today's Total" with large minute count, entry count, and total occurrences for today.
 
