@@ -152,3 +152,95 @@ export async function fetchTeamData(
 
   return { members, error: null }
 }
+
+export type ExportRow = {
+  name: string
+  team: string
+  category: string
+  subtask: string
+  minutes: number
+  occurrences: number
+  verified: boolean
+  note: string
+  date: string
+}
+
+export type ExportResult = {
+  rows: ExportRow[]
+  error: string | null
+}
+
+export async function fetchTeamExportData(
+  dateRange?: { start: string; end: string }
+): Promise<ExportResult> {
+  const supabase = await createClient()
+
+  const { data: { user: authUser } } = await supabase.auth.getUser()
+  if (!authUser) {
+    return { rows: [], error: 'Not authenticated' }
+  }
+
+  const { data: profile } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', authUser.id)
+    .single()
+
+  if (!profile || profile.role !== 'supervisor') {
+    return { rows: [], error: 'Supervisor access required' }
+  }
+
+  const { data: teamMembers } = await supabase
+    .from('users')
+    .select('id, name, team')
+    .eq('team', profile.team)
+
+  if (!teamMembers || teamMembers.length === 0) {
+    return { rows: [], error: null }
+  }
+
+  const { start, end } = dateRange ?? getWeekRange()
+  const memberIds = teamMembers.map((m) => m.id)
+
+  const { data: entries, error: entriesError } = await supabase
+    .from('log_entries')
+    .select('*, categories(label), subtasks(label)')
+    .in('user_id', memberIds)
+    .gte('created_at', start)
+    .lte('created_at', end)
+    .order('created_at', { ascending: false })
+
+  if (entriesError) {
+    return { rows: [], error: 'Failed to load export data' }
+  }
+
+  const memberMap = new Map(teamMembers.map((m) => [m.id, m]))
+
+  type ExportEntry = {
+    user_id: string
+    minutes: number
+    occurrences: number
+    verified: boolean
+    note: string | null
+    created_at: string
+    categories: { label: string } | null
+    subtasks: { label: string } | null
+  }
+
+  const rows: ExportRow[] = ((entries as ExportEntry[]) ?? []).map((entry) => {
+    const member = memberMap.get(entry.user_id)
+    return {
+      name: member?.name ?? 'Unknown',
+      team: member?.team ?? '',
+      category: entry.categories?.label ?? 'Unknown',
+      subtask: entry.subtasks?.label ?? 'Unknown',
+      minutes: entry.minutes,
+      occurrences: entry.occurrences,
+      verified: entry.verified,
+      note: entry.note ?? '',
+      date: entry.created_at,
+    }
+  })
+
+  return { rows, error: null }
+}

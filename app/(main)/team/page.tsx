@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@/types/database'
-import { fetchTeamData, type MemberStats } from './actions'
+import { fetchTeamData, fetchTeamExportData, type MemberStats, type ExportRow } from './actions'
 
 type TeamFilter = 'All' | 'CH' | 'MH'
 type DatePreset = 'this_week' | 'last_week' | 'this_month' | 'custom'
@@ -60,6 +60,59 @@ export default function TeamPage() {
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<TeamFilter>('All')
   const [datePreset, setDatePreset] = useState<DatePreset>('this_week')
+  const [exporting, setExporting] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+
+  const showToast = useCallback((message: string, type: 'success' | 'error') => {
+    setToast({ message, type })
+    setTimeout(() => setToast(null), 2500)
+  }, [])
+
+  const handleExport = useCallback(async () => {
+    setExporting(true)
+    try {
+      const dateRange = getDateRangeForPreset(datePreset)
+      const result = await fetchTeamExportData(dateRange)
+
+      if (result.error) {
+        showToast(result.error, 'error')
+        return
+      }
+
+      if (result.rows.length === 0) {
+        showToast('No entries to export', 'error')
+        return
+      }
+
+      const headers = ['Name', 'Team', 'Category', 'Sub-task', 'Minutes', 'Occurrences', 'Method', 'Note', 'Date']
+      const csvRows = result.rows.map((row: ExportRow) => [
+        `"${row.name.replace(/"/g, '""')}"`,
+        row.team,
+        `"${row.category.replace(/"/g, '""')}"`,
+        `"${row.subtask.replace(/"/g, '""')}"`,
+        row.minutes,
+        row.occurrences,
+        row.verified ? 'Timer' : 'Manual',
+        `"${row.note.replace(/"/g, '""')}"`,
+        new Date(row.date).toLocaleString(),
+      ])
+
+      const csv = [headers.join(','), ...csvRows.map((r) => r.join(','))].join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `mpl-team-report-${getDateRangeLabel(datePreset).toLowerCase().replace(/\s+/g, '-')}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      showToast(`Exported ${result.rows.length} entries`, 'success')
+    } catch {
+      showToast('Export failed', 'error')
+    } finally {
+      setExporting(false)
+    }
+  }, [datePreset, showToast])
 
   const loadTeamData = useCallback(async (preset: DatePreset) => {
     setLoading(true)
@@ -268,6 +321,30 @@ export default function TeamPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Export Button */}
+      <button
+        onClick={handleExport}
+        disabled={exporting}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-mpl-border bg-mpl-surface px-4 py-3 text-sm font-semibold text-slate-700 transition-colors duration-150 active:scale-[0.97] disabled:opacity-50"
+      >
+        <span>📥</span>
+        {exporting ? 'Exporting...' : 'Export Team Report'}
+      </button>
+
+      {/* Toast */}
+      {toast && (
+        <div
+          className={`fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm ${
+            toast.type === 'success'
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-600'
+          }`}
+          style={{ animation: 'fadeIn 200ms ease-out' }}
+        >
+          {toast.message}
         </div>
       )}
     </div>

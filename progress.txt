@@ -381,3 +381,22 @@
   - Team filter (All/CH/MH) stays client-side since it just filters already-fetched memberStats
   - MemberStats type is exported from actions.ts and imported in page.tsx for type sharing
 ---
+
+## Iteration 22 - 5.3 Add export button placeholder
+- Added fetchTeamExportData server action to app/(main)/team/actions.ts
+- Server action fetches raw log entries with category/subtask joins for the selected date range
+- Added "📥 Export Team Report" button at bottom of team page (supervisor view only)
+- Button generates a CSV download with columns: Name, Team, Category, Sub-task, Minutes, Occurrences, Method, Note, Date
+- CSV uses proper escaping (double-quote wrapping, escaped inner quotes)
+- Export respects the currently selected date range preset (This Week/Last Week/This Month)
+- Filename includes the date range label (e.g., mpl-team-report-this-week.csv)
+- Added toast notifications for export success/error/empty states
+- Exporting state disables button and shows "Exporting..." label
+- Files changed: app/(main)/team/actions.ts, app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - CSV generation in-browser using Blob + createObjectURL + programmatic click is clean and avoids needing an API route
+  - Server action returns raw rows; CSV formatting happens client-side for proper date localization
+  - URL.revokeObjectURL() cleanup prevents memory leaks from blob URLs
+  - The ExportRow type is shared between server action and client for type safety
+  - Toast pattern reused from log page: setTimeout auto-dismiss, fadeIn animation from globals.css
+---

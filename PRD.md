@@ -136,7 +136,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **5.2 Build team data queries** - Create server action or API route to aggregate team data: total minutes per member this week, top category per member, entry count per member. Supervisors can only see data for users on their same team. Use Supabase RLS to enforce this. Include date range filtering (default: current week).
 
-- [ ] **5.3 Add export button placeholder** - Add "📥 Export Team Report" button at bottom of team page. For MVP, this shows a toast "Export coming soon" or generates a simple CSV download of the team's log entries for the selected period.
+- [x] **5.3 Add export button placeholder** - Add "📥 Export Team Report" button at bottom of team page. For MVP, this shows a toast "Export coming soon" or generates a simple CSV download of the team's log entries for the selected period.
 
 ### Phase 6: PWA Setup
 
