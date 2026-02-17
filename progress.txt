@@ -361,3 +361,23 @@
   - Team badge colors: CH = amber (#FEF3C7/#92400E), MH = blue (#E0F2FE/#0284C7) — same pattern used in header
   - getInitials helper duplicated from layout.tsx — could be extracted to a shared util but kept local for simplicity
 ---
+
+## Iteration 21 - 5.2 Build team data queries
+- Created server action at app/(main)/team/actions.ts with fetchTeamData() function
+- Server action aggregates team data: total minutes per member, top category per member, entry count per member
+- Accepts optional dateRange parameter (default: current week) for date range filtering
+- RLS enforced via Supabase — supervisors can only see their team's users/entries
+- Refactored team page to call server action instead of inline client-side data fetching
+- Added date range filter UI: This Week / Last Week / This Month preset buttons
+- Date preset changes trigger re-fetch via server action with appropriate date range
+- Aggregate card header dynamically shows the selected date range label
+- Member cards show "No entries this period" instead of "this week" for generic wording
+- Files changed: app/(main)/team/actions.ts (new), app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Server actions use 'use server' directive and async function pattern — called directly from client components
+  - Server actions use the server Supabase client (lib/supabase/server.ts) which gets cookies automatically
+  - getWeekRange(offset) with negative offset gives previous weeks — useful for "Last Week" preset
+  - Date preset filter triggers a full re-fetch (new server action call) since entries change per date range
+  - Team filter (All/CH/MH) stays client-side since it just filters already-fetched memberStats
+  - MemberStats type is exported from actions.ts and imported in page.tsx for type sharing
+---

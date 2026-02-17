@@ -1,19 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@/types/database'
+import { fetchTeamData, type MemberStats } from './actions'
 
 type TeamFilter = 'All' | 'CH' | 'MH'
-
-type MemberStats = {
-  userId: string
-  name: string
-  team: 'CH' | 'MH'
-  entryCount: number
-  totalMinutes: number
-  topCategory: { label: string; icon: string } | null
-}
+type DatePreset = 'this_week' | 'last_week' | 'this_month' | 'custom'
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/)
@@ -21,18 +14,43 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-function getWeekRange(): { start: string; end: string } {
+function getWeekRange(offset = 0): { start: string; end: string } {
   const now = new Date()
   const dayOfWeek = now.getDay()
-  // Start of week (Monday)
   const monday = new Date(now)
-  monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7))
+  monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7) + offset * 7)
   monday.setHours(0, 0, 0, 0)
-  // End of week (Sunday 23:59:59)
   const sunday = new Date(monday)
   sunday.setDate(monday.getDate() + 6)
   sunday.setHours(23, 59, 59, 999)
   return { start: monday.toISOString(), end: sunday.toISOString() }
+}
+
+function getMonthRange(): { start: string; end: string } {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), now.getMonth(), 1)
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  end.setHours(23, 59, 59, 999)
+  return { start: start.toISOString(), end: end.toISOString() }
+}
+
+function getDateRangeLabel(preset: DatePreset): string {
+  switch (preset) {
+    case 'this_week': return 'This Week'
+    case 'last_week': return 'Last Week'
+    case 'this_month': return 'This Month'
+    case 'custom': return 'Custom'
+  }
+}
+
+function getDateRangeForPreset(preset: DatePreset): { start: string; end: string } | undefined {
+  switch (preset) {
+    case 'this_week': return undefined // server action defaults to current week
+    case 'last_week': return getWeekRange(-1)
+    case 'this_month': return getMonthRange()
+    case 'custom': return undefined
+  }
 }
 
 export default function TeamPage() {
@@ -41,22 +59,36 @@ export default function TeamPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<TeamFilter>('All')
+  const [datePreset, setDatePreset] = useState<DatePreset>('this_week')
+
+  const loadTeamData = useCallback(async (preset: DatePreset) => {
+    setLoading(true)
+    setError(null)
+
+    const dateRange = getDateRangeForPreset(preset)
+    const result = await fetchTeamData(dateRange)
+
+    if (result.error && result.error !== 'Supervisor access required') {
+      setError(result.error)
+    }
+
+    setMemberStats(result.members)
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
-    async function fetchData() {
+    async function init() {
       const supabase = createClient()
-
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return
 
-      // Fetch current user profile
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile } = await supabase
         .from('users')
         .select('*')
         .eq('id', authUser.id)
         .single()
 
-      if (profileError || !profile) {
+      if (!profile) {
         setError('Failed to load profile')
         setLoading(false)
         return
@@ -64,122 +96,21 @@ export default function TeamPage() {
 
       setCurrentUser(profile)
 
-      // If not supervisor, just show member view
       if (profile.role !== 'supervisor') {
         setLoading(false)
         return
       }
 
-      // Fetch team members (RLS ensures only same-team users are returned for supervisors)
-      const { data: teamMembers, error: membersError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('team', profile.team)
-
-      if (membersError) {
-        setError('Failed to load team members')
-        setLoading(false)
-        return
-      }
-
-      if (!teamMembers || teamMembers.length === 0) {
-        setLoading(false)
-        return
-      }
-
-      // Fetch this week's log entries for all team members
-      const { start, end } = getWeekRange()
-      const memberIds = teamMembers.map((m) => m.id)
-
-      const { data: entries, error: entriesError } = await supabase
-        .from('log_entries')
-        .select('*, categories(label, icon)')
-        .in('user_id', memberIds)
-        .gte('created_at', start)
-        .lte('created_at', end)
-
-      if (entriesError) {
-        setError('Failed to load team data')
-        setLoading(false)
-        return
-      }
-
-      // Aggregate stats per member
-      const statsMap = new Map<string, {
-        entryCount: number
-        totalMinutes: number
-        categoryMinutes: Map<string, { label: string; icon: string; minutes: number }>
-      }>()
-
-      // Initialize all members with zero stats
-      for (const member of teamMembers) {
-        statsMap.set(member.id, {
-          entryCount: 0,
-          totalMinutes: 0,
-          categoryMinutes: new Map(),
-        })
-      }
-
-      type EntryWithCategory = {
-        user_id: string
-        minutes: number
-        category_id: string
-        categories: { label: string; icon: string } | null
-      }
-
-      for (const entry of (entries as EntryWithCategory[]) ?? []) {
-        const stats = statsMap.get(entry.user_id)
-        if (!stats) continue
-
-        stats.entryCount += 1
-        stats.totalMinutes += entry.minutes
-
-        const existing = stats.categoryMinutes.get(entry.category_id)
-        if (existing) {
-          existing.minutes += entry.minutes
-        } else {
-          stats.categoryMinutes.set(entry.category_id, {
-            label: entry.categories?.label ?? 'Unknown',
-            icon: entry.categories?.icon ?? '📌',
-            minutes: entry.minutes,
-          })
-        }
-      }
-
-      // Build final member stats
-      const result: MemberStats[] = teamMembers.map((member) => {
-        const stats = statsMap.get(member.id)!
-        let topCategory: MemberStats['topCategory'] = null
-
-        if (stats.categoryMinutes.size > 0) {
-          let maxMinutes = 0
-          for (const cat of stats.categoryMinutes.values()) {
-            if (cat.minutes > maxMinutes) {
-              maxMinutes = cat.minutes
-              topCategory = { label: cat.label, icon: cat.icon }
-            }
-          }
-        }
-
-        return {
-          userId: member.id,
-          name: member.name,
-          team: member.team,
-          entryCount: stats.entryCount,
-          totalMinutes: stats.totalMinutes,
-          topCategory,
-        }
-      })
-
-      // Sort by total minutes descending
-      result.sort((a, b) => b.totalMinutes - a.totalMinutes)
-
-      setMemberStats(result)
-      setLoading(false)
+      await loadTeamData('this_week')
     }
 
-    fetchData()
-  }, [])
+    init()
+  }, [loadTeamData])
+
+  const handleDatePresetChange = (preset: DatePreset) => {
+    setDatePreset(preset)
+    loadTeamData(preset)
+  }
 
   if (loading) {
     return (
@@ -235,7 +166,7 @@ export default function TeamPage() {
     <div className="space-y-4">
       {/* Team Aggregate Card */}
       <div className="rounded-2xl bg-gradient-to-br from-mpl-primary to-mpl-primary-dark p-5 text-white">
-        <p className="text-xs font-medium text-white/70">This Week</p>
+        <p className="text-xs font-medium text-white/70">{getDateRangeLabel(datePreset)}</p>
         <p className="mt-1 text-3xl font-bold">
           {weekTotalHours}<span className="text-lg font-semibold text-white/80">h</span>
         </p>
@@ -249,7 +180,24 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* Filter Buttons */}
+      {/* Date Range Filter */}
+      <div className="flex gap-2 overflow-x-auto">
+        {(['this_week', 'last_week', 'this_month'] as const).map((preset) => (
+          <button
+            key={preset}
+            onClick={() => handleDatePresetChange(preset)}
+            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+              datePreset === preset
+                ? 'bg-mpl-primary-light text-mpl-primary'
+                : 'border border-mpl-border bg-mpl-surface text-slate-500'
+            }`}
+          >
+            {getDateRangeLabel(preset)}
+          </button>
+        ))}
+      </div>
+
+      {/* Team Filter Buttons */}
       <div className="flex gap-2">
         {(['All', 'CH', 'MH'] as const).map((option) => (
           <button
@@ -304,7 +252,7 @@ export default function TeamPage() {
                     {member.topCategory.icon} {member.topCategory.label}
                   </p>
                 ) : (
-                  <p className="mt-0.5 text-xs text-slate-400">No entries this week</p>
+                  <p className="mt-0.5 text-xs text-slate-400">No entries this period</p>
                 )}
                 <p className="mt-0.5 text-xs text-slate-400">
                   {member.entryCount} {member.entryCount === 1 ? 'entry' : 'entries'}
