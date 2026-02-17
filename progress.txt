@@ -400,3 +400,21 @@
   - The ExportRow type is shared between server action and client for type safety
   - Toast pattern reused from log page: setTimeout auto-dismiss, fadeIn animation from globals.css
 ---
+
+## Iteration 23 - 6.1 Configure PWA manifest and service worker
+- Created app/manifest.ts using Next.js built-in MetadataRoute.Manifest (no external PWA package needed)
+- Manifest includes: name "MPL", short_name "MPL", theme_color #0EA5E9, background_color #F8FAFC, display standalone, start_url /, 192x192 and 512x512 icons
+- Generated PWA icons (192x192, 512x512, apple-touch-icon 180x180) using Python PIL — blue rounded-rect background with white "M" letter
+- Created public/sw.js service worker with: precache of main routes/icons on install, stale-while-revalidate for static assets, network-first with cache fallback strategy, old cache cleanup on activate
+- Updated app/layout.tsx with: Viewport export (themeColor, width, initialScale, maximumScale), appleWebApp metadata (capable, statusBarStyle, title), apple-touch-icon link, inline script for service worker registration
+- Updated next.config.ts with service worker headers: Content-Type, Cache-Control (no-cache), Content-Security-Policy
+- Used Next.js built-in PWA support instead of @ducanh2912/next-pwa — cleaner approach for Next.js 16, no extra dependency
+- Files changed: app/manifest.ts (new), public/sw.js (new), public/icon-192x192.png (new), public/icon-512x512.png (new), public/apple-touch-icon.png (new), app/layout.tsx, next.config.ts, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Next.js has built-in manifest support via app/manifest.ts — returns MetadataRoute.Manifest, auto-served at /manifest.webmanifest
+  - Viewport config (themeColor) must be exported separately from metadata in Next.js 14+ (separate Viewport export)
+  - Service worker registration via inline script with dangerouslySetInnerHTML avoids needing a client component wrapper
+  - Service worker headers in next.config.ts ensure sw.js is never cached and has proper content type
+  - appleWebApp metadata in Next.js adds necessary iOS PWA meta tags automatically
+  - No need for @ducanh2912/next-pwa package — that package is stale (last published ~1 year ago), Next.js built-in approach is preferred for 2025+
+---
