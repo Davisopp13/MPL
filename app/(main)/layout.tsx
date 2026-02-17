@@ -35,7 +35,7 @@ export default async function MainLayout({
   const initials = getInitials(profile.name)
 
   return (
-    <div className="mx-auto min-h-screen max-w-[430px] bg-mpl-bg">
+    <div className="mx-auto min-h-screen max-w-[430px] overflow-x-hidden bg-mpl-bg">
       <MplHeader initials={initials} team={profile.team} />
       <InstallPrompt />
       <main className="p-4 pb-24">

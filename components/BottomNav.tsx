@@ -22,7 +22,7 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex flex-1 flex-col items-center gap-0.5 pb-[env(safe-area-inset-bottom)] pt-2 pb-2 text-xs transition-colors duration-150 ${
+              className={`flex flex-1 flex-col items-center gap-0.5 pt-2 pb-2 text-xs transition-colors duration-150 ${
                 isActive
                   ? 'border-t-2 border-mpl-primary text-mpl-primary'
                   : 'border-t-2 border-transparent text-slate-400'

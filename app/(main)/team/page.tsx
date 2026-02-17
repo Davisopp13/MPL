@@ -247,7 +247,7 @@ export default function TeamPage() {
         <p className="mt-1 text-3xl font-bold">
           {weekTotalHours}<span className="text-lg font-semibold text-white/80">h</span>
         </p>
-        <div className="mt-2 flex items-center gap-4">
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
           <p className="text-xs text-white/70">
             {filteredMembers.length} {filteredMembers.length === 1 ? 'member' : 'members'}
           </p>
@@ -275,7 +275,7 @@ export default function TeamPage() {
       </div>
 
       {/* Team Filter Buttons */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(['All', 'CH', 'MH'] as const).map((option) => (
           <button
             key={option}
@@ -365,7 +365,7 @@ export default function TeamPage() {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm ${
+          className={`fixed bottom-24 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm ${
             toast.type === 'success'
               ? 'border-green-200 bg-green-50 text-green-700'
               : 'border-red-200 bg-red-50 text-red-600'

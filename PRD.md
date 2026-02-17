@@ -148,7 +148,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **7.1 Add loading states and error handling** - Add skeleton loading states for: category grid, history list, insights charts, team list. Add error boundaries with retry buttons. Add empty states for: no entries in history ("No entries yet - start logging!"), no insights data ("Log entries to see insights"), no team data.
 
-- [ ] **7.2 Mobile responsiveness pass** - Ensure all views work well at 320px-430px width. Test: category grid doesn't overflow, time chips wrap properly, history cards don't truncate important info, bottom nav has safe area padding, no horizontal scroll anywhere. Use Tailwind responsive utilities.
+- [x] **7.2 Mobile responsiveness pass** - Ensure all views work well at 320px-430px width. Test: category grid doesn't overflow, time chips wrap properly, history cards don't truncate important info, bottom nav has safe area padding, no horizontal scroll anywhere. Use Tailwind responsive utilities.
 
 - [ ] **7.3 Add page transitions and micro-interactions** - Subtle animations: slide-up for step transitions in log flow, fade-in for toast notifications, press feedback on buttons (scale 0.97 on active), smooth progress bar fills on insights. Use CSS animations or Tailwind `transition` utilities. Keep it fast - no animation > 200ms.
 

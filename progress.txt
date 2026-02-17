@@ -456,3 +456,22 @@
   - Using gradient opacity (from-mpl-primary/20) creates subtle tinted skeleton cards for gradient sections
   - Empty states benefit from slightly larger padding (p-8 vs p-6) and bigger icons (text-3xl) for visual weight
 ---
+
+## Iteration 26 - 7.2 Mobile responsiveness pass
+- Ensured all views work at 320px-430px width range
+- Added overflow-x-hidden on html/body and main layout container to prevent horizontal scrolling
+- Fixed BottomNav conflicting padding classes (removed duplicate pb-[env(safe-area-inset-bottom)] in favor of separate safe-area div)
+- Log page: added min-w-0 and break-words to category cards for long labels, reduced padding to p-3 on narrow screens (sm:p-4), truncate on breadcrumb subtask label, shrink-0 on breadcrumb chevron, smaller time chip padding (px-3 py-1.5), smaller custom input (w-[4.5rem] px-2.5 py-1.5), responsive "How many times?" text (text-xs default, sm:text-sm)
+- History page: flex-wrap on category label + badge row, flex-wrap on summary card stats
+- Insights page: truncate on category breakdown labels with min-w-0 container, shrink-0 on icon/stats, flex-wrap with gap-y on automation opportunity stats
+- Team page: flex-wrap on filter buttons and aggregate card stats, responsive toast width
+- Toast notifications: constrained with w-[calc(100%-2rem)] max-w-sm for proper width on narrow screens
+- Files changed: app/globals.css, app/(main)/layout.tsx, components/BottomNav.tsx, app/(main)/log/page.tsx, app/(main)/history/page.tsx, app/(main)/insights/page.tsx, app/(main)/team/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - overflow-x-hidden on both html and body is needed to fully prevent horizontal scroll on all browsers
+  - flex-wrap is essential for any row of items that might exceed container width (badges, chips, stats)
+  - min-w-0 on flex children allows truncate to work — without it, flex items refuse to shrink below content width
+  - Toasts need width constraints (calc(100% - 2rem) max-w-sm) to not overflow on narrow screens
+  - sm: breakpoint in Tailwind is 640px — for 320px-430px mobile-only range, the base styles ARE the mobile styles
+  - break-words on text prevents single long words from causing overflow in constrained containers
+---

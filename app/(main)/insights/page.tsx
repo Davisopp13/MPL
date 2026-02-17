@@ -282,14 +282,14 @@ export default function InsightsPage() {
                 : 0
               return (
                 <div key={cat.categoryId}>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E0F2FE] text-sm">
+                  <div className="mb-1.5 flex items-center justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#E0F2FE] text-sm">
                         {cat.icon}
                       </span>
-                      <span className="text-sm font-medium text-slate-700">{cat.label}</span>
+                      <span className="truncate text-sm font-medium text-slate-700">{cat.label}</span>
                     </div>
-                    <div className="text-right">
+                    <div className="shrink-0 text-right">
                       <span className="text-sm font-bold text-mpl-primary">
                         {cat.totalMinutes.toLocaleString()}m
                       </span>
@@ -326,7 +326,7 @@ export default function InsightsPage() {
           <p className="mt-0.5 text-xs text-[#92400E]">
             {topSubtask.categoryIcon} {topSubtask.categoryLabel}
           </p>
-          <div className="mt-3 flex items-baseline gap-4">
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-2">
             <div>
               <p className="text-xl font-bold text-[#78350F]">
                 {topSubtask.totalMinutes.toLocaleString()}m

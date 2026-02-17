@@ -169,7 +169,7 @@ export default function HistoryPage() {
       <div className="rounded-2xl bg-gradient-to-br from-mpl-primary to-mpl-primary-dark p-5 text-white">
         <p className="text-sm font-medium text-white/80">Today&apos;s Total</p>
         <p className="mt-1 text-4xl font-bold">{todayMinutes}m</p>
-        <div className="mt-3 flex items-center gap-4">
+        <div className="mt-3 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="text-sm text-white/70">📝</span>
             <span className="text-sm font-medium text-white/90">
@@ -207,12 +207,12 @@ export default function HistoryPage() {
 
                 {/* Entry details */}
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-sm font-semibold text-slate-800">
                       {entry.categories.label}
                     </span>
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
                         entry.verified
                           ? 'bg-[#ECFDF5] text-[#065F46]'
                           : 'bg-[#FEF3C7] text-[#92400E]'

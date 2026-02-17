@@ -274,7 +274,7 @@ export default function LogPage() {
       {/* Toast notification */}
       {toast && (
         <div
-          className={`fixed left-1/2 top-20 z-50 -translate-x-1/2 animate-[fadeIn_150ms_ease-out] rounded-xl px-5 py-3 text-sm font-semibold shadow-sm ${
+          className={`fixed left-1/2 top-20 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 animate-[fadeIn_150ms_ease-out] rounded-xl px-5 py-3 text-sm font-semibold shadow-sm ${
             toast.type === 'success'
               ? 'border-l-4 border-green-500 bg-white text-green-700'
               : 'border-l-4 border-red-500 bg-white text-red-700'
@@ -294,18 +294,18 @@ export default function LogPage() {
           >
             ←
           </button>
-          <div className="flex items-center gap-1.5 text-sm text-slate-500">
+          <div className="min-w-0 flex-1 flex items-center gap-1.5 text-sm text-slate-500">
             <button
               type="button"
-              className={step === 'subtask' ? 'font-medium text-slate-800' : 'cursor-pointer text-mpl-primary hover:underline'}
+              className={`shrink-0 ${step === 'subtask' ? 'font-medium text-slate-800' : 'cursor-pointer text-mpl-primary hover:underline'}`}
               onClick={step !== 'subtask' ? () => { setStep('subtask'); setSelectedSubtask(null) } : undefined}
             >
               {selectedCategory?.icon} {selectedCategory?.label}
             </button>
             {step === 'time' && selectedSubtask && (
               <>
-                <span className="text-slate-300">›</span>
-                <span className="font-medium text-slate-800">
+                <span className="shrink-0 text-slate-300">›</span>
+                <span className="truncate font-medium text-slate-800">
                   {selectedSubtask.label}
                 </span>
               </>
@@ -325,10 +325,10 @@ export default function LogPage() {
               <button
                 key={category.id}
                 onClick={() => handleCategorySelect(category)}
-                className="flex flex-col items-start rounded-xl border border-mpl-border bg-mpl-surface p-4 text-left transition-colors duration-150 active:scale-[0.97] active:bg-mpl-primary-light"
+                className="flex min-w-0 flex-col items-start rounded-xl border border-mpl-border bg-mpl-surface p-3 text-left transition-colors duration-150 active:scale-[0.97] active:bg-mpl-primary-light sm:p-4"
               >
                 <span className="text-2xl leading-none">{category.icon}</span>
-                <span className="mt-2 text-sm font-semibold text-slate-800 leading-tight">
+                <span className="mt-2 break-words text-sm font-semibold leading-tight text-slate-800">
                   {category.label}
                 </span>
                 <span className="mt-1 text-xs text-slate-400">
@@ -359,10 +359,10 @@ export default function LogPage() {
                       : ''
                   }`}
                 >
-                  <span className="text-sm font-medium text-slate-800">
+                  <span className="min-w-0 flex-1 text-sm font-medium text-slate-800">
                     {subtask.label}
                   </span>
-                  <span className="text-slate-300">›</span>
+                  <span className="shrink-0 text-slate-300">›</span>
                 </button>
               ))}
           </div>
@@ -421,7 +421,7 @@ export default function LogPage() {
                       key={minutes}
                       type="button"
                       onClick={() => handleChipSelect(minutes)}
-                      className={`rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors duration-150 active:scale-[0.97] ${
+                      className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-150 active:scale-[0.97] ${
                         selectedChip === minutes
                           ? 'border-mpl-primary bg-mpl-primary text-white'
                           : 'border-mpl-border bg-mpl-surface text-slate-700'
@@ -438,7 +438,7 @@ export default function LogPage() {
                       placeholder="Custom"
                       value={customMinutes && !TIME_CHIPS.includes(parseInt(customMinutes, 10) as typeof TIME_CHIPS[number]) ? customMinutes : ''}
                       onChange={(e) => handleCustomMinutesChange(e.target.value)}
-                      className="w-20 rounded-full border border-mpl-border bg-mpl-surface px-3 py-2 text-center text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:border-mpl-primary focus:outline-none"
+                      className="w-[4.5rem] rounded-full border border-mpl-border bg-mpl-surface px-2.5 py-1.5 text-center text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:border-mpl-primary focus:outline-none"
                     />
                     {customMinutes && !TIME_CHIPS.includes(parseInt(customMinutes, 10) as typeof TIME_CHIPS[number]) && (
                       <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
@@ -530,7 +530,7 @@ export default function LogPage() {
               >
                 +
               </button>
-              <span className="text-sm text-slate-400">How many times?</span>
+              <span className="shrink text-xs text-slate-400 sm:text-sm">How many times?</span>
             </div>
           </div>
 
