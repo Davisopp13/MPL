@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import MplHeader from '@/components/MplHeader'
 import BottomNav from '@/components/BottomNav'
+import InstallPrompt from '@/components/InstallPrompt'
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/)
@@ -36,6 +37,7 @@ export default async function MainLayout({
   return (
     <div className="mx-auto min-h-screen max-w-[430px] bg-mpl-bg">
       <MplHeader initials={initials} team={profile.team} />
+      <InstallPrompt />
       <main className="p-4 pb-24">
         {children}
       </main>

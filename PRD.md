@@ -142,7 +142,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **6.1 Configure PWA manifest and service worker** - Install and configure `@ducanh2912/next-pwa` (or `next-pwa`). Create `public/manifest.json` with: name "MPL", short_name "MPL", theme_color "#0EA5E9", background_color "#F8FAFC", display "standalone", start_url "/", icons (generate 192x192 and 512x512 PNG icons with the letter "M" on blue background). Configure service worker for caching strategy. Add meta tags to layout: `<meta name="theme-color">`, `<link rel="manifest">`, `<meta name="apple-mobile-web-app-capable">`.
 
-- [ ] **6.2 Add install prompt** - Detect PWA installability via `beforeinstallprompt` event. Show a dismissible banner at top of the app: "Install MPL for quick access" with an "Install" button. Store dismissal in localStorage so it doesn't keep showing. Only show on mobile browsers that support PWA install.
+- [x] **6.2 Add install prompt** - Detect PWA installability via `beforeinstallprompt` event. Show a dismissible banner at top of the app: "Install MPL for quick access" with an "Install" button. Store dismissal in localStorage so it doesn't keep showing. Only show on mobile browsers that support PWA install.
 
 ### Phase 7: Polish & Testing
 

@@ -418,3 +418,23 @@
   - appleWebApp metadata in Next.js adds necessary iOS PWA meta tags automatically
   - No need for @ducanh2912/next-pwa package — that package is stale (last published ~1 year ago), Next.js built-in approach is preferred for 2025+
 ---
+
+## Iteration 24 - 6.2 Add install prompt
+- Created components/InstallPrompt.tsx as a client component
+- Detects PWA installability via `beforeinstallprompt` event
+- Shows dismissible banner: "Install MPL for quick access" with Install button and dismiss (✕) button
+- Stores dismissal in localStorage (key: mpl-install-dismissed) so banner doesn't reappear
+- Checks for standalone display mode — doesn't show if already running as PWA
+- Install button calls deferredPrompt.prompt() to trigger native install dialog
+- Dismiss button hides banner and persists dismissal to localStorage
+- Banner styled with MPL blue tint (bg #E0F2FE, blue border-bottom, blue Install button)
+- Added InstallPrompt to app/(main)/layout.tsx between MplHeader and main content
+- BeforeInstallPromptEvent interface typed properly with prompt() and userChoice
+- Files changed: components/InstallPrompt.tsx (new), app/(main)/layout.tsx
+- Learnings for future iterations:
+  - beforeinstallprompt event is Chrome/Edge-only (not Safari/Firefox) — the component gracefully handles this by only showing when the event fires
+  - Must call e.preventDefault() in the beforeinstallprompt handler to prevent the browser's default mini-infobar
+  - window.matchMedia('(display-mode: standalone)') detects if the app is already installed and running as PWA
+  - The banner sits between the header and main content in the layout — no fixed positioning needed since it flows naturally
+  - localStorage persistence ensures the banner respects user's dismiss choice across sessions
+---
