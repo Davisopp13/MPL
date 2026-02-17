@@ -97,3 +97,21 @@
   - Onboarding check in middleware: query users table by auth.uid() — if no row, redirect to /onboard
   - signInWithOtp with emailRedirectTo sends the magic link to the specified callback URL
 ---
+
+## Iteration 7 - 1.7 Create onboarding flow
+- Created app/onboard/page.tsx with name input and team selection (CH/MH)
+- Two large team selection buttons: CH (amber styling with 📦) and MH (blue styling with 🚢)
+- On submit, inserts row into users table with auth user ID, email, name, and team
+- Checks if user already exists in users table on mount — redirects to / if so
+- Redirects unauthenticated users to /login
+- Loading state while checking existing user, submit button disabled until name + team selected
+- Error handling for auth and database errors
+- Consistent styling with login page (card layout, MPL branding, same input/button styles)
+- Files changed: app/onboard/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - Onboard page is a client component since it handles form state and Supabase client calls
+  - The middleware already handles redirecting non-authed users and checking onboarding status
+  - The onboard page also does its own check (belt + suspenders) for better UX
+  - Team selection uses border-2 with conditional styling for selected vs unselected states
+  - router.replace() instead of router.push() so user can't navigate back to onboarding
+---

@@ -98,7 +98,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **1.6 Set up Supabase Auth** - Create `app/login/page.tsx` with magic link auth using Supabase. Minimal UI: email input, "Send Magic Link" button, MPL branding. Create `app/auth/callback/route.ts` to handle the auth callback. Create middleware at `middleware.ts` to protect all routes except `/login` and `/auth/callback`. After first login, redirect to an onboarding step if user doesn't exist in the users table yet.
 
-- [ ] **1.7 Create onboarding flow** - Create `app/onboard/page.tsx`. After first auth, user enters their name and selects their team (CH or MH) via two large buttons. This creates their row in the users table. Redirect to `/` after completion. If user already exists in users table, skip onboarding and go to `/`.
+- [x] **1.7 Create onboarding flow** - Create `app/onboard/page.tsx`. After first auth, user enters their name and selects their team (CH or MH) via two large buttons. This creates their row in the users table. Redirect to `/` after completion. If user already exists in users table, skip onboarding and go to `/`.
 
 ### Phase 2: Core Logging Flow
 
