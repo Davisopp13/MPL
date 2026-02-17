@@ -321,3 +321,20 @@
   - LogEntryWithCategory extends LogEntry with `categories: { label: string; icon: string } | null` for the Supabase join
   - The existing entries state type changed from LogEntry[] to LogEntryWithCategory[] since the query now includes joins
 ---
+
+## Iteration 19 - 4.3 Build automation opportunity callout
+- Added amber "Automation Opportunity" callout card below category breakdown on insights page
+- Updated LogEntryWithCategory type to include subtasks join data (subtasks: { label: string } | null)
+- Updated Supabase query to fetch subtasks(label) alongside categories(label, icon)
+- Added TopSubtask type and calculateTopSubtask() pure function
+- Identifies the sub-task with the highest total minutes across all entries
+- Shows: sub-task name, parent category (with icon), total minutes, projected monthly savings (total × 4.3)
+- Card only renders when topSubtask is non-null (i.e., entries exist)
+- Amber styling matches PRD brand: bg #FEF3C7, border amber-200, text #92400E/#78350F, icon bg #FDE68A
+- Files changed: app/(main)/insights/page.tsx, PRD.md, progress.txt
+- Learnings for future iterations:
+  - calculateTopSubtask iterates subtaskMap.values() to find max — avoids sorting overhead for single-max operation
+  - Monthly savings projection: total minutes × 4.3 (average weeks per month), using Math.round for clean display
+  - The subtask join is added alongside existing category join: select('*, categories(label, icon), subtasks(label)')
+  - Amber color palette for the card: #FEF3C7 (bg), #FDE68A (icon bg), #92400E (secondary text), #78350F (primary text)
+---

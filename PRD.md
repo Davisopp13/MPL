@@ -128,7 +128,7 @@ MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey
 
 - [x] **4.2 Build category breakdown chart** - Below KPI cards, show "Time by Category" section. For each category with logged time: icon + label on left, minutes + percentage on right, horizontal progress bar (blue gradient, relative to highest category). Sorted by minutes descending.
 
-- [ ] **4.3 Build automation opportunity callout** - Below category chart, an amber card with lightbulb icon and "Automation Opportunity" header. Identifies the sub-task with the highest total minutes across all entries. Shows: sub-task name, parent category, total minutes, and projected monthly savings (total × 4.3). Only shows if there are entries.
+- [x] **4.3 Build automation opportunity callout** - Below category chart, an amber card with lightbulb icon and "Automation Opportunity" header. Identifies the sub-task with the highest total minutes across all entries. Shows: sub-task name, parent category, total minutes, and projected monthly savings (total × 4.3). Only shows if there are entries.
 
 ### Phase 5: Team / Supervisor View
 

@@ -6,6 +6,7 @@ import type { LogEntry } from '@/types/database'
 
 type LogEntryWithCategory = LogEntry & {
   categories: { label: string; icon: string } | null
+  subtasks: { label: string } | null
 }
 
 type KpiData = {
@@ -21,6 +22,14 @@ type CategoryBreakdown = {
   icon: string
   totalMinutes: number
   percentage: number
+}
+
+type TopSubtask = {
+  subtaskLabel: string
+  categoryLabel: string
+  categoryIcon: string
+  totalMinutes: number
+  monthlySavings: number
 }
 
 function calculateKpis(entries: LogEntry[]): KpiData {
@@ -71,6 +80,35 @@ function calculateCategoryBreakdown(entries: LogEntryWithCategory[]): CategoryBr
   }))
 }
 
+function calculateTopSubtask(entries: LogEntryWithCategory[]): TopSubtask | null {
+  if (entries.length === 0) return null
+
+  const subtaskMap = new Map<string, { subtaskLabel: string; categoryLabel: string; categoryIcon: string; totalMinutes: number }>()
+
+  for (const entry of entries) {
+    const existing = subtaskMap.get(entry.subtask_id)
+    if (existing) {
+      existing.totalMinutes += entry.minutes
+    } else {
+      subtaskMap.set(entry.subtask_id, {
+        subtaskLabel: entry.subtasks?.label ?? 'Unknown',
+        categoryLabel: entry.categories?.label ?? 'Unknown',
+        categoryIcon: entry.categories?.icon ?? '📌',
+        totalMinutes: entry.minutes,
+      })
+    }
+  }
+
+  let top: TopSubtask | null = null
+  for (const data of subtaskMap.values()) {
+    if (!top || data.totalMinutes > top.totalMinutes) {
+      top = { ...data, monthlySavings: Math.round(data.totalMinutes * 4.3) }
+    }
+  }
+
+  return top
+}
+
 export default function InsightsPage() {
   const [entries, setEntries] = useState<LogEntryWithCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -85,7 +123,7 @@ export default function InsightsPage() {
 
       const { data, error: fetchError } = await supabase
         .from('log_entries')
-        .select('*, categories(label, icon)')
+        .select('*, categories(label, icon), subtasks(label)')
         .eq('user_id', user.id)
 
       if (fetchError) {
@@ -135,6 +173,7 @@ export default function InsightsPage() {
   const kpis = calculateKpis(entries)
   const categoryBreakdown = calculateCategoryBreakdown(entries)
   const totalMinutesAllCategories = entries.reduce((sum, e) => sum + e.minutes, 0)
+  const topSubtask = calculateTopSubtask(entries)
 
   const cards = [
     {
@@ -232,6 +271,38 @@ export default function InsightsPage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Automation Opportunity Callout */}
+      {topSubtask && (
+        <div className="rounded-2xl border border-amber-200 bg-[#FEF3C7] p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FDE68A] text-base">
+              💡
+            </span>
+            <h2 className="text-sm font-semibold text-[#92400E]">Automation Opportunity</h2>
+          </div>
+          <p className="text-sm font-medium text-[#78350F]">
+            {topSubtask.subtaskLabel}
+          </p>
+          <p className="mt-0.5 text-xs text-[#92400E]">
+            {topSubtask.categoryIcon} {topSubtask.categoryLabel}
+          </p>
+          <div className="mt-3 flex items-baseline gap-4">
+            <div>
+              <p className="text-xl font-bold text-[#78350F]">
+                {topSubtask.totalMinutes.toLocaleString()}m
+              </p>
+              <p className="text-xs text-[#92400E]">total logged</p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-[#78350F]">
+                ~{topSubtask.monthlySavings.toLocaleString()}m
+              </p>
+              <p className="text-xs text-[#92400E]">projected / month</p>
+            </div>
           </div>
         </div>
       )}
