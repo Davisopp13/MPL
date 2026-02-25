@@ -127,7 +127,7 @@ export default function OnboardPage() {
                 <span className="text-3xl">📦</span>
                 <span className="text-sm font-semibold">CH</span>
                 <span className="text-xs text-slate-500">
-                  Container Handler
+                  Carrier Haulage
                 </span>
               </button>
               <button
@@ -141,7 +141,7 @@ export default function OnboardPage() {
               >
                 <span className="text-3xl">🚢</span>
                 <span className="text-sm font-semibold">MH</span>
-                <span className="text-xs text-slate-500">Marine Handler</span>
+                <span className="text-xs text-slate-500">Merchant Haulage</span>
               </button>
             </div>
           </fieldset>

@@ -2,7 +2,7 @@
 -- Inserts all CH (9 categories) and MH (10 categories) with their subtasks
 
 -- ============================================================
--- CH Categories (Container Handler) - 9 categories
+-- CH Categories (Carrier Haulage) - 9 categories
 -- ============================================================
 
 -- CH 1: Dwell Report
@@ -132,7 +132,7 @@ FROM cat, (VALUES
 ) AS t(label, sort_order);
 
 -- ============================================================
--- MH Categories (Marine Handler) - 10 categories
+-- MH Categories (Merchant Haulage) - 10 categories
 -- ============================================================
 
 -- MH 1: Port / Terminal Mgmt

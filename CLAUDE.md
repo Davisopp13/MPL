@@ -2,7 +2,7 @@
 
 ## Project: MPL (Manual Process Log)
 
-A PWA that replaces a 124-question Microsoft Forms survey with a sub-15-second time tracker for CH (Container Handler) and MH (Marine Handler) teams. Leadership uses the data to prioritize automation investments.
+A PWA that replaces a 124-question Microsoft Forms survey with a sub-15-second time tracker for CH (Carrier Haulage) and MH (Merchant Haulage) teams. Leadership uses the data to prioritize automation investments.
 
 ## Commands
 
@@ -87,7 +87,7 @@ middleware.ts             # Auth route protection
 
 ## Domain Knowledge
 
-- **CH** = Container Handler (9 categories), **MH** = Marine Handler (10 categories)
+- **CH** = Carrier Haulage (9 categories), **MH** = Merchant Haulage (10 categories)
 - Each category has sub-tasks — these are the actual manual processes being tracked
 - Users belong to exactly one team and only see their team's categories
 - The logging flow is 3 steps: **Category → Sub-task → Time entry**

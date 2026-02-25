@@ -2,7 +2,7 @@
 
 ## Overview
 
-MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey with a fast, mobile-friendly time tracker. CH (Container Handler) and MH (Marine Handler) teams log productivity loss from manual processes in seconds. Leadership gets real-time visibility into where automation investment will have the highest ROI.
+MPL is a Progressive Web App that replaces a 124-question Microsoft Forms survey with a fast, mobile-friendly time tracker. CH (Carrier Haulage) and MH (Merchant Haulage) teams log productivity loss from manual processes in seconds. Leadership gets real-time visibility into where automation investment will have the highest ROI.
 
 **Target time to log an entry: under 15 seconds.**
 

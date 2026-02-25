@@ -21,7 +21,7 @@ MPL (Manual Process Log) is a PWA replacing a 124-question Microsoft Forms surve
 - `verified: true` means the entry was timed, `verified: false` means manual estimate
 
 ## Key Domain Knowledge
-- CH = Container Handler, MH = Marine Handler (two distinct teams)
+- CH = Carrier Haulage, MH = Merchant Haulage (two distinct teams)
 - Categories are team-specific (CH has 9, MH has 10)
 - Each category has sub-tasks (the actual processes being logged)
 - Users only see categories for their team
