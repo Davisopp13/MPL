@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Track time spent on manual processes. Fast, mobile-friendly time logging for CH and MH teams.",
   icons: {
     icon: "/logo.svg",
-    apple: "/logo.svg",
+    apple: "/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,
@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/logo.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>
         {children}
