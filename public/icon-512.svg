@@ -1,0 +1,19 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue gradient background -->
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0284C7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="40" height="40" rx="8" fill="url(#blueGradient)"/>
+
+  <!-- Three horizontal lines -->
+  <g>
+    <rect x="10" y="12" width="20" height="3" rx="1.5" fill="white"/>
+    <rect x="10" y="18.5" width="20" height="3" rx="1.5" fill="white"/>
+    <rect x="10" y="25" width="10" height="3" rx="1.5" fill="white"/>
+  </g>
+</svg>
