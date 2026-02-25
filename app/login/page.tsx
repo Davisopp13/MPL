@@ -52,9 +52,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-mpl-bg px-4">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-mpl-primary-dark to-mpl-primary text-2xl font-bold text-white">
-          M
-        </div>
+        <img src="/icon-192x192.png" alt="MPL" className="mx-auto mb-4 h-16 w-16 rounded-2xl" />
         <h1 className="text-2xl font-bold text-slate-900">MPL</h1>
         <p className="mt-1 text-sm text-slate-500">Manual Process Log</p>
       </div>
