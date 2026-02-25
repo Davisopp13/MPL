@@ -102,26 +102,28 @@ export async function loginAsDemo(): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Demo auth succeeded but no user session found.')
 
-  const { data: existingProfile } = await supabase
+  const { data: existingProfile, error: selectError } = await supabase
     .from('users')
     .select('id')
     .eq('id', user.id)
     .single()
 
-  if (!existingProfile) {
-    const { error: profileError } = await supabase.from('users').insert({
-      id: user.id,
-      email: DEMO_EMAIL,
-      name: 'Demo User',
-      team: 'CH' as const,
-      role: 'member' as const,
-    })
+  const isNew = !existingProfile && selectError?.code === 'PGRST116'
 
-    if (profileError) {
-      throw new Error(`Demo profile creation failed: ${profileError.message}`)
-    }
+  const { error: profileError } = await supabase.from('users').upsert({
+    id: user.id,
+    email: DEMO_EMAIL,
+    name: 'Demo User',
+    team: 'CH' as const,
+    role: 'member' as const,
+  }, { onConflict: 'id', ignoreDuplicates: true })
 
-    // Seed sample log entries for the new demo user
+  if (profileError) {
+    throw new Error(`Demo profile creation failed: ${profileError.message}`)
+  }
+
+  // Seed sample log entries only on first login
+  if (isNew) {
     await seedDemoEntries(user.id)
   }
 }
